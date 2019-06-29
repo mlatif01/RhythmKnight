@@ -1,14 +1,15 @@
 package com.latif.rhythmknight;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.latif.rhythmknight.Screens.PlayScreen;
 
 public class RhythmKnight extends Game {
+
+	// Virtual width and height for the game
+	public static final int V_WIDTH = 400;
+	public static final int V_HEIGHT = 208;
+
 	//  The container which stores our images. Public so all screens can access
 	public SpriteBatch batch;
 

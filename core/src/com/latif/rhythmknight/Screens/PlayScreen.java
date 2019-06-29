@@ -8,12 +8,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
+import com.latif.rhythmknight.Scenes.Hud;
 
 public class PlayScreen implements Screen {
 
   // Field variables
   private RhythmKnight game;
-  Texture texture;
+  private Hud hud;
 
   // a camera with orthographic projection
   private OrthographicCamera gameCam;
@@ -21,16 +22,16 @@ public class PlayScreen implements Screen {
   // Manages a Camera and determines how world coordinates are mapped to and from the screen
   private Viewport gamePort;
 
-  // Constructor for initialising the playscreen
+  // Constructor for initialising the playscreen - as we need to send the game to the screen
   public PlayScreen(RhythmKnight game) {
     this.game = game;
-    texture = new Texture("badlogic.jpg");
+    // create cam used to follow the game
     gameCam = new OrthographicCamera();
+    // create FitViewport to maintain virtual aspect ratio despite screen size
+    gamePort = new FitViewport(RhythmKnight.V_WIDTH, RhythmKnight.V_HEIGHT, gameCam);
+    // create game HUD for scores/hp/level
+    hud = new Hud(game.batch);
 
-    // FitViewport also supports a virtual screen size to maintain aspect ratio
-    // It keeps the aspect ratio by scaling the world up to fit the screen, adding black bars for
-    // remaining space
-    gamePort = new FitViewport(800, 480, gameCam);
   }
 
   @Override
@@ -40,22 +41,21 @@ public class PlayScreen implements Screen {
 
   @Override
   public void render(float delta) {
+    // clear the screen at each render
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     // tell the game batch to recognise where the camera is in the game world
     // (setProjectionMatrix sets the project matrix used by this batch)
     // (combined is the combined projection and 4x4 view matrix)
-    game.batch.setProjectionMatrix(gameCam.combined);
-
-    // set up the batch for drawing
-    game.batch.begin();
-
-    // draws texture to screen
-    game.batch.draw(texture, 0, 0);
-
-    // end
-    game.batch.end();
+    game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
+    hud.stage.draw();
+//
+//    // set up the batch for drawing
+//    game.batch.begin();
+//
+//    // end
+//    game.batch.end();
   }
 
   // Called when application is resized. This happens at any point during a non paused state but
