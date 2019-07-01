@@ -1,6 +1,7 @@
 package com.latif.rhythmknight.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,12 +22,16 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
+import com.latif.rhythmknight.Sprites.RKnight;
 
 public class PlayScreen implements Screen {
 
   // Field variables
   private RhythmKnight game;
   private Hud hud;
+
+  // create RKnight player sprite
+  private RKnight player;
 
   // variable used to position the screen (**Improve this implementation**)
   private int eCount = 0;
@@ -54,20 +59,22 @@ public class PlayScreen implements Screen {
     this.game = game;
     // create cam used to follow the game
     gameCam = new OrthographicCamera();
-    // create FitViewport to maintain virtual aspect ratio despite screen size
-    gamePort = new FitViewport(RhythmKnight.V_WIDTH, RhythmKnight.V_HEIGHT, gameCam);
+    // create FitViewport to maintain virtual aspect ratio despite screen size - scale to PPM
+    gamePort = new FitViewport(RhythmKnight.V_WIDTH / RhythmKnight.PPM,
+            RhythmKnight.V_HEIGHT / RhythmKnight.PPM, gameCam);
     // create game HUD for scores/hp/level
     hud = new Hud(game.batch);
     // create, load and render our game map
     mapLoader = new TmxMapLoader();
     map = mapLoader.load("level1.tmx");
-    mapRenderer = new OrthogonalTiledMapRenderer(map);
+    mapRenderer = new OrthogonalTiledMapRenderer(map, 1/RhythmKnight.PPM);
     // centre the gamecam to the correct aspect ratio at start of the game
     gameCam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
-    // set up Box2d World, no gravity at the moment
-    world = new World(new Vector2(0, 0), true);
+    // set up Box2d World, with gravity
+    world = new World(new Vector2(0, -10), true);
     b2dr = new Box2DDebugRenderer();
+    player = new RKnight(world);
 
     // Adding bodies and fixtures to the game world (This will need to be put in separate classes)
     // A definition of what the body, fixtures consists of
@@ -76,16 +83,15 @@ public class PlayScreen implements Screen {
     FixtureDef fdef = new FixtureDef();
     Body body;
 
-    // create ground bodies/fixtures
-    for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)){
-      Rectangle rect = ((RectangleMapObject)object).getRectangle();
+    // create ground bodies/fixtures - scale to PPM
+    for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
+      Rectangle rect = ((RectangleMapObject) object).getRectangle();
 
       bdef.type = BodyDef.BodyType.StaticBody;
-      bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
-
+      bdef.position.set((rect.getX() + rect.getWidth() / 2) / RhythmKnight.PPM, (rect.getY() + rect.getHeight() / 2) / RhythmKnight.PPM);
       body = world.createBody(bdef);
 
-      shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+      shape.setAsBox((rect.getWidth() / 2) / RhythmKnight.PPM, (rect.getHeight() / 2) / RhythmKnight.PPM);
       fdef.shape = shape;
       body.createFixture(fdef);
     }
@@ -101,6 +107,14 @@ public class PlayScreen implements Screen {
   public void update(float deltaTime) {
     // handles any key inputs or events
     handleInput(deltaTime);
+
+    //  Tells the physics engine that 1/60th of a second has passed every time you call it.
+    //  If your game loop is being called more than 60 times a second it will go fast; less than 60
+    //  times a second and it'll be slow.
+    // The number of times it gets called per second will depend on the speed of the underlying
+    // hardware, so this method will end up in different behavior on different devices.
+    world.step(1/60f, 6, 2);
+
     // always update the camera at every iteration of our render cycle
     gameCam.update();
     // this will only render what the gameCam can see
@@ -115,19 +129,31 @@ public class PlayScreen implements Screen {
 
     // Move screen to correct position at start of game
     // **Improve the implementation of this**
-    if (eCount < 250) {
-      gameCam.position.x += 50 * deltaTime;
+    if (eCount < 120) {
+      gameCam.position.x += 1 * deltaTime;
       eCount += 1;
+    }
+
+    // TEST
+    // Handling input for RK movement
+    if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+      player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && (player.b2body.getLinearVelocity().x <= 2)) {
+      player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+    }
+    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (player.b2body.getLinearVelocity().x >= -2)) {
+      player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
     }
 
   }
 
   @Override
   public void render(float delta) {
-    // At each render cycle we call update first
+    // At each render cycle we call update first - separates update logic from render
     update(delta);
 
-    // clear the screen at each render
+    // clear the screen at each render with black
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
