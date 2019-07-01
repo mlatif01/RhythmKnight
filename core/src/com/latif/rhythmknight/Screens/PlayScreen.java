@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Sprites.RKnight;
+import com.latif.rhythmknight.Tools.B2WorldCreator;
 
 public class PlayScreen implements Screen {
 
@@ -74,29 +75,11 @@ public class PlayScreen implements Screen {
     // set up Box2d World, with gravity
     world = new World(new Vector2(0, -10), true);
     b2dr = new Box2DDebugRenderer();
+
+    new B2WorldCreator(world, map);
+
+    // create RKnight in our game world
     player = new RKnight(world);
-
-    // Adding bodies and fixtures to the game world (This will need to be put in separate classes)
-    // A definition of what the body, fixtures consists of
-    BodyDef bdef = new BodyDef();
-    PolygonShape shape = new PolygonShape();
-    FixtureDef fdef = new FixtureDef();
-    Body body;
-
-    // create ground bodies/fixtures - scale to PPM
-    for (MapObject object : map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)) {
-      Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-      bdef.type = BodyDef.BodyType.StaticBody;
-      bdef.position.set((rect.getX() + rect.getWidth() / 2) / RhythmKnight.PPM, (rect.getY() + rect.getHeight() / 2) / RhythmKnight.PPM);
-      body = world.createBody(bdef);
-
-      shape.setAsBox((rect.getWidth() / 2) / RhythmKnight.PPM, (rect.getHeight() / 2) / RhythmKnight.PPM);
-      fdef.shape = shape;
-      body.createFixture(fdef);
-    }
-
-
   }
 
   @Override
@@ -202,6 +185,10 @@ public class PlayScreen implements Screen {
 
   @Override
   public void dispose() {
-
+    map.dispose();
+    mapRenderer.dispose();
+    world.dispose();
+    b2dr.dispose();
+    hud.dispose();
   }
 }
