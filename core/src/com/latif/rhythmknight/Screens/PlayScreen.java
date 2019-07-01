@@ -5,18 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,11 +21,14 @@ import com.latif.rhythmknight.Tools.B2WorldCreator;
 
 public class PlayScreen implements Screen {
 
-  // Field variables
+  // reference to the game, used to set screens
   private RhythmKnight game;
+  private TextureAtlas atlas;
+
+  // reference to the Hud
   private Hud hud;
 
-  // create RKnight player sprite
+  // sprites
   private RKnight player;
 
   // variable used to position the screen (**Improve this implementation**)
@@ -57,51 +54,47 @@ public class PlayScreen implements Screen {
 
   // Constructor for initialising the playscreen - as we need to send the game to the screen
   public PlayScreen(RhythmKnight game) {
+    // create TextureAtlas based on spritesheet
+    atlas = new TextureAtlas("RKGraphics.pack");
+
     this.game = game;
+
     // create cam used to follow the game
     gameCam = new OrthographicCamera();
+
     // create FitViewport to maintain virtual aspect ratio despite screen size - scale to PPM
     gamePort = new FitViewport(RhythmKnight.V_WIDTH / RhythmKnight.PPM,
             RhythmKnight.V_HEIGHT / RhythmKnight.PPM, gameCam);
+
     // create game HUD for scores/hp/level
     hud = new Hud(game.batch);
+
     // create, load and render our game map
     mapLoader = new TmxMapLoader();
     map = mapLoader.load("level1.tmx");
-    mapRenderer = new OrthogonalTiledMapRenderer(map, 1/RhythmKnight.PPM);
-    // centre the gamecam to the correct aspect ratio at start of the game
-    gameCam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
+    mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / RhythmKnight.PPM);
+
+    // centre the gameCam to the correct aspect ratio at start of the game
+    gameCam.position.set(gamePort.getWorldWidth() / 2f, gamePort.getWorldHeight() / 2f, 0);
 
     // set up Box2d World, with gravity
     world = new World(new Vector2(0, -10), true);
     b2dr = new Box2DDebugRenderer();
 
+    // create B2WorldCreator
     new B2WorldCreator(world, map);
 
-    // create RKnight in our game world
-    player = new RKnight(world);
+    // create RKnight in our game world for the active PlayScreen
+    player = new RKnight(world, this);
+  }
+
+  public TextureAtlas getAtlas() {
+    return atlas;
   }
 
   @Override
   public void show() {
 
-  }
-
-  public void update(float deltaTime) {
-    // handles any key inputs or events
-    handleInput(deltaTime);
-
-    //  Tells the physics engine that 1/60th of a second has passed every time you call it.
-    //  If your game loop is being called more than 60 times a second it will go fast; less than 60
-    //  times a second and it'll be slow.
-    // The number of times it gets called per second will depend on the speed of the underlying
-    // hardware, so this method will end up in different behavior on different devices.
-    world.step(1/60f, 6, 2);
-
-    // always update the camera at every iteration of our render cycle
-    gameCam.update();
-    // this will only render what the gameCam can see
-    mapRenderer.setView(gameCam);
   }
 
   // Handle any key inputs or events
@@ -112,7 +105,7 @@ public class PlayScreen implements Screen {
 
     // Move screen to correct position at start of game
     // **Improve the implementation of this**
-    if (eCount < 120) {
+    if (eCount < 150) {
       gameCam.position.x += 1 * deltaTime;
       eCount += 1;
     }
@@ -129,6 +122,29 @@ public class PlayScreen implements Screen {
       player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
     }
 
+    // MOVE GOBLING LEFT
+
+  }
+
+  public void update(float deltaTime) {
+    // handles any key inputs or events
+    handleInput(deltaTime);
+
+    //  Tells the physics engine that 1/60th of a second has passed every time you call it.
+    //  If your game loop is being called more than 60 times a second it will go fast; less than 60
+    //  times a second and it'll be slow.
+    // The number of times it gets called per second will depend on the speed of the underlying
+    // hardware, so this method will end up in different behavior on different devices.
+    world.step(1 / 60f, 6, 2);
+
+    //update deltaTime for player sprite
+    player.update(deltaTime);
+
+    // always update the camera at every iteration of our render cycle
+    gameCam.update();
+
+    // this will only render what the gameCam can see
+    mapRenderer.setView(gameCam);
   }
 
   @Override
@@ -146,18 +162,23 @@ public class PlayScreen implements Screen {
     // render our Box2dDebugLines
     b2dr.render(world, gameCam.combined);
 
-    // tell the game batch to recognise where the camera is in the game world
+    // set only what the game can see
+    game.batch.setProjectionMatrix(gameCam.combined);
+
+    // set up the batch for drawing
+    game.batch.begin();
+
+    player.draw(game.batch);
+
+    // end batch drawing
+    game.batch.end();
+
     // (setProjectionMatrix sets the project matrix used by this batch)
     // (combined is the combined projection and 4x4 view matrix)
+    // set our batch to now draw what the Hud camera sees
     game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.stage.draw();
 
-//
-//    // set up the batch for drawing
-//    game.batch.begin();
-//
-//    // end
-//    game.batch.end();
   }
 
   // Called when application is resized. This happens at any point during a non paused state but

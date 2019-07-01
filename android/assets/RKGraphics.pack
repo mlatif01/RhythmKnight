@@ -1,0 +1,159 @@
+
+RKGraphics.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Gobling
+  rotate: false
+  xy: 1, 100
+  size: 256, 16
+  orig: 256, 16
+  offset: 0, 0
+  index: -1
+adventurer-attack1-00
+  rotate: false
+  xy: 1, 61
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack1-01
+  rotate: false
+  xy: 1, 22
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack1-02
+  rotate: false
+  xy: 53, 61
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack1-03
+  rotate: false
+  xy: 53, 22
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack1-04
+  rotate: false
+  xy: 105, 61
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack2-00
+  rotate: false
+  xy: 105, 22
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack2-01
+  rotate: false
+  xy: 157, 61
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack2-02
+  rotate: false
+  xy: 157, 22
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack2-03
+  rotate: false
+  xy: 209, 61
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack2-04
+  rotate: false
+  xy: 209, 22
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack2-05
+  rotate: false
+  xy: 261, 79
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack3-00
+  rotate: false
+  xy: 261, 40
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack3-01
+  rotate: false
+  xy: 313, 79
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack3-02
+  rotate: false
+  xy: 313, 40
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack3-03
+  rotate: false
+  xy: 365, 79
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack3-04
+  rotate: false
+  xy: 365, 40
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-attack3-05
+  rotate: false
+  xy: 417, 79
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-idle-2-00
+  rotate: false
+  xy: 417, 40
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-idle-2-01
+  rotate: false
+  xy: 261, 1
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-idle-2-02
+  rotate: false
+  xy: 313, 1
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
+adventurer-idle-2-03
+  rotate: false
+  xy: 365, 1
+  size: 50, 37
+  orig: 50, 37
+  offset: 0, 0
+  index: -1
