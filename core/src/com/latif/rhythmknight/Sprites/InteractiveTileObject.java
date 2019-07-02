@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.latif.rhythmknight.RhythmKnight;
+import com.latif.rhythmknight.Screens.PlayScreen;
 
 public class InteractiveTileObject {
   protected World world;
@@ -17,9 +18,9 @@ public class InteractiveTileObject {
   protected Rectangle bounds;
   protected Body body;
 
-  public InteractiveTileObject(World world, TiledMap map, Rectangle bounds) {
-    this.world = world;
-    this.map = map;
+  public InteractiveTileObject(PlayScreen screen, Rectangle bounds) {
+    this.world = screen.getWorld();
+    this.map = screen.getMap();
     this.bounds = bounds;
 
     BodyDef bdef = new BodyDef();

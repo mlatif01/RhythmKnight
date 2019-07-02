@@ -55,7 +55,7 @@ public class RKnight extends Sprite {
   // float used as offset for end of slash00 animation
   private float attackAniOffset = 2.0f;
 
-  public RKnight(World world, PlayScreen screen) {
+  public RKnight(PlayScreen screen) {
     // get sprite actions for idle RKnight - initial frame
     super(screen.getAtlas().findRegion("adventurer-idle-00"));
 
@@ -71,7 +71,7 @@ public class RKnight extends Sprite {
     // method to set up array of animations
     defineAnimations();
 
-    this.world = world;
+    this.world = screen.getWorld();
     defineRKnight();
     // create RKnight idle texture
     rKnightIdleTextureRegion = new TextureRegion(getTexture(), 419, 19, 37, 37);

@@ -86,10 +86,10 @@ public class PlayScreen implements Screen {
     b2dr = new Box2DDebugRenderer();
 
     // create B2WorldCreator
-    new B2WorldCreator(world, map);
+    new B2WorldCreator(this);
 
     // create RKnight in our game world for the active PlayScreen
-    player = new RKnight(world, this);
+    player = new RKnight(this);
 
   }
 
@@ -210,6 +210,14 @@ public class PlayScreen implements Screen {
   public void resize(int width, int height) {
     // important that the viewport is adjusted so that it knows what the actual screen size is
     gamePort.update(width, height);
+  }
+
+  public TiledMap getMap() {
+    return map;
+  }
+
+  public World getWorld() {
+    return world;
   }
 
   @Override
