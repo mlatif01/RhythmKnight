@@ -18,6 +18,7 @@ import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
+import com.latif.rhythmknight.Tools.CutSceneController;
 
 public class PlayScreen implements Screen {
 
@@ -31,8 +32,11 @@ public class PlayScreen implements Screen {
   // sprites
   private RKnight player;
 
-  // variable used to position the screen (**Improve this implementation**)
-  private int eCount = 0;
+  // Cutscene variables
+  // boolean representing if cutscene has been executed
+  private boolean cameraPositioned = false;
+  private final float cameraStop = 5.0f;
+  private final float cameraSpeed = 0.5f;
 
   // Box2d variables
   private World world;
@@ -86,6 +90,7 @@ public class PlayScreen implements Screen {
 
     // create RKnight in our game world for the active PlayScreen
     player = new RKnight(world, this);
+
   }
 
   public TextureAtlas getAtlas() {
@@ -97,21 +102,33 @@ public class PlayScreen implements Screen {
 
   }
 
-  // Handle any key inputs or events
-  public void handleInput(float deltaTime) {
-//    if (Gdx.input.isTouched()) {
-//      gameCam.position.x += 100 * deltaTime;
-//    }
-
+  public void animateCutsceneFrames(float deltaTime) {
     // Move screen to correct position at start of game
     // **Improve the implementation of this**
-    if (eCount < 150) {
-      gameCam.position.x += 1 * deltaTime;
-      eCount += 1;
+    if (gameCam.position.x < cameraStop) {
+      gameCam.position.x += cameraSpeed * deltaTime;
+    }
+    // stop moving camera when in correct position
+    if (gameCam.position.x > cameraStop) {
+      cameraPositioned = true;
+    }
+    // move Player to correct position
+    if (gameCam.position.x - 1.5f > player.b2body.getPosition().x && gameCam.position.x < cameraStop) {
+      player.b2body.applyLinearImpulse(new Vector2(0.5f, 0f), player.b2body.getWorldCenter(), true);
+    }
+  }
+
+  // Handle any key inputs or events
+  public void handleInput(float deltaTime) {
+
+    // play cutscene at beginning of game
+    if (!cameraPositioned) {
+      animateCutsceneFrames(deltaTime);
+    } else if (cameraPositioned) {
+      player.readyToBattle = true;
     }
 
-    // TEST
-    // Handling input for RK movement
+    // Handling input for RK actions
     if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
       player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
     }
@@ -121,12 +138,16 @@ public class PlayScreen implements Screen {
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (player.b2body.getLinearVelocity().x >= -2)) {
       player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
     }
+    if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+      player.executeSlash();
+    }
 
     // MOVE GOBLING LEFT
 
   }
 
   public void update(float deltaTime) {
+
     // handles any key inputs or events
     handleInput(deltaTime);
 
@@ -137,7 +158,7 @@ public class PlayScreen implements Screen {
     // hardware, so this method will end up in different behavior on different devices.
     world.step(1 / 60f, 6, 2);
 
-    //update deltaTime for player sprite
+    //update for player sprite
     player.update(deltaTime);
 
     // always update the camera at every iteration of our render cycle
@@ -148,9 +169,10 @@ public class PlayScreen implements Screen {
   }
 
   @Override
-  public void render(float delta) {
+  public void render(float deltaTime) {
+
     // At each render cycle we call update first - separates update logic from render
-    update(delta);
+    update(deltaTime);
 
     // clear the screen at each render with black
     Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -178,6 +200,7 @@ public class PlayScreen implements Screen {
     // set our batch to now draw what the Hud camera sees
     game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.stage.draw();
+
 
   }
 
