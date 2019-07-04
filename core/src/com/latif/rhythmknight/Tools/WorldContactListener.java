@@ -12,16 +12,78 @@ import com.latif.rhythmknight.Sprites.RKnight;
 
 public class WorldContactListener implements ContactListener {
 
+  public static boolean swordOnObject = false;
+
   // called when two fixtures begin to collide
   @Override
   public void beginContact(Contact contact) {
+    Fixture fixA = contact.getFixtureA();
+    Fixture fixB = contact.getFixtureB();
+
+    Fixture sword = fixA.getUserData() == "sword" ? fixA : fixB;
+    Fixture object = sword == fixA ? fixB : fixA;
+
+    if (fixA.getUserData() != null && fixA.getUserData().equals("sword")) {
+      swordOnObject = true;
+
+      // if user data is null, if not check if user data is an interactiveTileObject
+      if (object.getUserData() != null && object.getUserData() instanceof InteractiveTileObject) {
+        // if TileObject in range of sword and player is attacking call respective methods
+        ((InteractiveTileObject) object.getUserData()).inSwordRange();
+        if (swordOnObject) {
+          System.out.println("SWORD IS ON STONE FROM A: " + isSwordOnObject());
+          ((InteractiveTileObject) object.getUserData()).checkSwordHit();
+        }
+      }
+
+      // CHECK FOR GOBLING TOUCHING SWORD
+      // if user data is null, if not check if user data is an Enemy
+      if (object.getUserData() != null && object.getUserData() instanceof Enemy) {
+        // if TileObject in range of sword and player is attacking call respective methods
+        ((Enemy) object.getUserData()).hitOnHead();
+        if (swordOnObject) {
+          System.out.println("SWORD IS ON GOBLING FROM A: " + isSwordOnObject());
+          ((Enemy) object.getUserData()).hitOnHead();
+        }
+      }
+
+      if (fixB.getUserData() != null && fixB.getUserData().equals("sword")) {
+        swordOnObject = true;
+        // if user data is null, if not check if user data is an interactiveTileObject
+        if (object.getUserData() != null && object.getUserData() instanceof InteractiveTileObject) {
+          // if TileObject in range of sword and player is attacking call respective methods
+          ((InteractiveTileObject) object.getUserData()).inSwordRange();
+          if (swordOnObject) {
+            System.out.println("SWORD IS ON STONE FROM B: " + isSwordOnObject());
+            ((InteractiveTileObject) object.getUserData()).checkSwordHit();
+          }
+        }
+      }
+    }
 
   }
 
   // when two fixtures disconnect from each other
   @Override
   public void endContact(Contact contact) {
+    Fixture fixA = contact.getFixtureA();
+    Fixture fixB = contact.getFixtureB();
 
+    Fixture sword = fixA.getUserData() == "sword" ? fixA : fixB;
+    Fixture object = sword == fixA ? fixB : fixA;
+
+    if (fixA.getUserData() != null && fixA.getUserData().equals("sword") && object.getUserData() instanceof InteractiveTileObject) {
+      swordOnObject = false;
+      System.out.println("SWORD NOT IN RANGE OF STONE: " + isSwordOnObject());
+    }
+    if (fixB.getUserData() != null && fixB.getUserData().equals("sword") && object.getUserData() instanceof InteractiveTileObject) {
+      swordOnObject = false;
+      System.out.println("SWORD NOT IN RANGE OF STONE");
+    }
+  }
+
+  public static boolean isSwordOnObject() {
+    return swordOnObject;
   }
 
   // when something has collided you can change the characteristics of that collision
@@ -34,27 +96,20 @@ public class WorldContactListener implements ContactListener {
   @Override
   public void postSolve(Contact contact, ContactImpulse impulse) {
 
+
     // define the fixtures which are colliding
     Fixture fixA = contact.getFixtureA();
     Fixture fixB = contact.getFixtureB();
-
+//
     int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
     // check which fixture is sword and which is object
     // check if its colliding in range of sword and execute objects onSwordHit method
-    if (fixA.getUserData() == "sword" || fixB.getUserData() == "sword") {
-      // two new fixtures
+    // two new fixtures
       Fixture sword = fixA.getUserData() == "sword" ? fixA : fixB;
       Fixture object = sword == fixA ? fixB : fixA;
 
-      // if user data is null, if not check if user data is an interactiveTileObject
-      if (object.getUserData() != null && object.getUserData() instanceof InteractiveTileObject) {
-        // if TileObject in range of sword and player is attacking call respective methods
-        ((InteractiveTileObject) object.getUserData()).inSwordRange();
-        ((InteractiveTileObject) object.getUserData()).checkSwordHit();
 
-      }
-    }
 
     // switch statement  to check for collision with gobling head
     switch (cDef) {
@@ -78,4 +133,5 @@ public class WorldContactListener implements ContactListener {
         break;
     }
   }
+
 }

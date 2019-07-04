@@ -31,6 +31,9 @@ public class Gobling extends Enemy {
   private Animation<TextureRegion> goblingHurt;
   private Animation<TextureRegion> goblingDie;
 
+  // track how many goblings are dead
+  public static int death = 0;
+
 
   public Gobling(PlayScreen screen, float x, float y) {
     super(screen, x, y);
@@ -127,6 +130,7 @@ public class Gobling extends Enemy {
   public void draw(Batch batch){
     if(!destroyed || stateTime < 1)
       super.draw(batch);
+    death += 1;
   }
 
   @Override
@@ -139,7 +143,6 @@ public class Gobling extends Enemy {
 
   @Override
   public void touchingRKnight() {
-    System.out.println("Touching RK");
   }
 
 }

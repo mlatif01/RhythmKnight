@@ -18,6 +18,7 @@ public class Stone extends InteractiveTileObject {
     setCategoryFilter(RhythmKnight.STONE_BIT);
   }
 
+
   @Override
   public void inSwordRange() {
     Gdx.app.log("Stone", "In range");

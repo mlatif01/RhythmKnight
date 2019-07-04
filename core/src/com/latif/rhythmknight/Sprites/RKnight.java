@@ -1,6 +1,7 @@
 package com.latif.rhythmknight.Sprites;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Screens.PlayScreen;
+import com.latif.rhythmknight.Tools.WorldContactListener;
 
 
 public class RKnight extends Sprite {
@@ -103,7 +105,7 @@ public class RKnight extends Sprite {
   public void defineRKnight() {
     // define body of sprite
     BodyDef bdef = new BodyDef();
-    bdef.position.set(128 / RhythmKnight.PPM, 128 / RhythmKnight.PPM);
+    bdef.position.set(60 / RhythmKnight.PPM, 128 / RhythmKnight.PPM);
     bdef.type = BodyDef.BodyType.DynamicBody;
     b2body = world.createBody(bdef);
 
@@ -117,22 +119,28 @@ public class RKnight extends Sprite {
             RhythmKnight.GOBLING_BIT | RhythmKnight.GOBLING_HEAD_BIT;
     // create fixture of sprite
     fdef.shape = shape;
-    b2body.createFixture(fdef);
+    b2body.createFixture(fdef).setUserData("rknight");
 
     // define and create fixture for sword
     EdgeShape sword = new EdgeShape();
-    sword.set(new Vector2(5 / RhythmKnight.PPM, 1/ RhythmKnight.PPM), new Vector2(16 / RhythmKnight.PPM, 1/ RhythmKnight.PPM));
+    sword.set(new Vector2(25 / RhythmKnight.PPM, 20/ RhythmKnight.PPM), new Vector2(5 / RhythmKnight.PPM, 1/ RhythmKnight.PPM));
+    fdef.isSensor = true;
     fdef.filter.categoryBits = RhythmKnight.SWORD_BIT;
     // set what sword can collide with
     fdef.filter.maskBits = RhythmKnight.GROUND_BIT | RhythmKnight.STONE_BIT | RhythmKnight.OBJECT_BIT |
             RhythmKnight.GOBLING_BIT | RhythmKnight.GOBLING_HEAD_BIT;
     fdef.shape = sword;
     b2body.createFixture(fdef).setUserData("sword");
-    fdef.isSensor = true;
+
   }
 
   // update state of RKnight sprite
   public void update(float deltaTime) {
+
+    if (WorldContactListener.isSwordOnObject()) {
+
+    }
+
     // if running left fix position
     if (!runningRight) {
       setPosition(b2body.getPosition().x - getWidth() / 2 + xPadding, b2body.getPosition().y - getHeight() / 2);
@@ -147,10 +155,13 @@ public class RKnight extends Sprite {
 
   // handle slash input from user defined in PlayScreen class by setting is attacking to true
   public void handleSlash() {
-    isAttacking = true;
-    canMove = false;
-    b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
-    b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
+    if (currentState != State.JUMPING) {
+      isAttacking = true;
+      canMove = false;
+      b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
+      b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
+      RhythmKnight.manager.get("audio/sounds/swordsound.wav", Music.class).play();
+    }
   }
 
   private TextureRegion getFrame(float deltaTime) {

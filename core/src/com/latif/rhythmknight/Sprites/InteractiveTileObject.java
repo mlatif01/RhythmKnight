@@ -1,5 +1,6 @@
 package com.latif.rhythmknight.Sprites;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -63,5 +64,6 @@ public abstract class InteractiveTileObject {
     filter.categoryBits = filterBit;
     fixture.setFilterData(filter);
   }
+
 
 }
