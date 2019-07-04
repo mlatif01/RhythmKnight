@@ -1,0 +1,152 @@
+
+slime_graphics.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+slime-attack-0
+  rotate: false
+  xy: 1, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-attack-1
+  rotate: false
+  xy: 35, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-attack-2
+  rotate: false
+  xy: 69, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-attack-3
+  rotate: false
+  xy: 103, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-attack-4
+  rotate: false
+  xy: 137, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-die-0
+  rotate: false
+  xy: 171, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-die-1
+  rotate: false
+  xy: 205, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-die-2
+  rotate: false
+  xy: 239, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-die-3
+  rotate: false
+  xy: 273, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-hurt-0
+  rotate: false
+  xy: 307, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-hurt-1
+  rotate: false
+  xy: 341, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-hurt-2
+  rotate: false
+  xy: 375, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-hurt-3
+  rotate: false
+  xy: 409, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-idle-0
+  rotate: false
+  xy: 443, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-idle-1
+  rotate: false
+  xy: 477, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-idle-2
+  rotate: false
+  xy: 511, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-idle-3
+  rotate: false
+  xy: 545, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-move-0
+  rotate: false
+  xy: 579, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-move-1
+  rotate: false
+  xy: 613, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-move-2
+  rotate: false
+  xy: 647, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+slime-move-3
+  rotate: false
+  xy: 681, 1
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1

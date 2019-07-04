@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Screens.PlayScreen;
 import com.latif.rhythmknight.Sprites.Gobling;
+import com.latif.rhythmknight.Sprites.Stone;
 
 public class B2WorldCreator {
 
@@ -35,8 +36,16 @@ public class B2WorldCreator {
 
       shape.setAsBox((rect.getWidth() / 2) / RhythmKnight.PPM, (rect.getHeight() / 2) / RhythmKnight.PPM);
       fdef.shape = shape;
+      fdef.filter.categoryBits = RhythmKnight.GROUND_BIT;
       body.createFixture(fdef);
     }
+
+    // create stone bodies/ fixtures
+        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
+          Rectangle rect = ((RectangleMapObject) object).getRectangle();
+
+          new Stone(screen, object);
+        }
 
 //    // create gobling bodies/fixtures
 //    for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {

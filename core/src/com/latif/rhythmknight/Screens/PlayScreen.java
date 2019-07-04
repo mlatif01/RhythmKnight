@@ -3,6 +3,8 @@ package com.latif.rhythmknight.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -16,25 +18,32 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
+import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
 import com.latif.rhythmknight.Tools.CutSceneController;
+import com.latif.rhythmknight.Tools.WorldContactListener;
 
 public class PlayScreen implements Screen {
 
   // reference to the game, used to set screens
   private RhythmKnight game;
   private TextureAtlas atlas;
+  private TextureAtlas atlas_2;
 
   // reference to the Hud
   private Hud hud;
 
   // sprites
   private RKnight player;
+  private Gobling gobling;
+
+  // music
+  private Music music;
 
   // Cutscene variables
   // boolean representing if cutscene has been executed
-  private boolean cameraPositioned = false;
+  private boolean cameraPositioned = true;
   private final float cameraStop = 5.0f;
   private final float cameraSpeed = 0.5f;
 
@@ -56,10 +65,14 @@ public class PlayScreen implements Screen {
   // Manages a Camera and determines how world coordinates are mapped to and from the screen
   private Viewport gamePort;
 
+  // Cutscene controller which initiates cutscenes
+  private CutSceneController cutSceneController;
+
   // Constructor for initialising the playscreen - as we need to send the game to the screen
   public PlayScreen(RhythmKnight game) {
-    // create TextureAtlas based on spritesheet
+    // create TextureAtlas based on spritesheets
     atlas = new TextureAtlas("RKGraphics.pack");
+    atlas_2 = new TextureAtlas("slime_graphics.pack");
 
     this.game = game;
 
@@ -83,19 +96,31 @@ public class PlayScreen implements Screen {
 
     // set up Box2d World, with gravity
     world = new World(new Vector2(0, -10), true);
+
     b2dr = new Box2DDebugRenderer();
 
     // create B2WorldCreator
     new B2WorldCreator(this);
 
-    // create RKnight in our game world for the active PlayScreen
+    // create entity objects in our game world for the active PlayScreen
     player = new RKnight(this);
+    gobling = new Gobling(this, 2.8f, .32f);
 
+    // identifying collision objects
+    world.setContactListener(new WorldContactListener());
+
+    // set up music for the current Screen
+    music = RhythmKnight.manager.get("audio/music/background.ogg", Music.class);
+    music.setLooping(true);
+    music.setVolume(0.1f);
+    music.play();
   }
 
+  // getter for atlas'
   public TextureAtlas getAtlas() {
     return atlas;
   }
+  public TextureAtlas getAtlas_2() {return atlas_2;}
 
   @Override
   public void show() {
@@ -132,16 +157,18 @@ public class PlayScreen implements Screen {
     if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
       player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && (player.b2body.getLinearVelocity().x <= 2)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && (player.b2body.getLinearVelocity().x <= 2)
+    && player.canMove) {
       player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (player.b2body.getLinearVelocity().x >= -2)) {
+    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (player.b2body.getLinearVelocity().x >= -2)
+    && player.canMove) {
       player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.X)) {
-      player.executeSlash();
+      player.handleSlash();
+      RhythmKnight.manager.get("audio/sounds/swordsound.wav", Music.class).play();
     }
-
     // MOVE GOBLING LEFT
 
   }
@@ -158,8 +185,9 @@ public class PlayScreen implements Screen {
     // hardware, so this method will end up in different behavior on different devices.
     world.step(1 / 60f, 6, 2);
 
-    //update for player sprite
+    //update for sprites
     player.update(deltaTime);
+    gobling.update(deltaTime);
 
     // always update the camera at every iteration of our render cycle
     gameCam.update();
@@ -190,6 +218,7 @@ public class PlayScreen implements Screen {
     // set up the batch for drawing
     game.batch.begin();
 
+    gobling.draw(game.batch);
     player.draw(game.batch);
 
     // end batch drawing
