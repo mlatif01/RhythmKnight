@@ -9,12 +9,15 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Screens.PlayScreen;
 import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.Stone;
 
 public class B2WorldCreator {
+
+  private Array<Gobling> goblings;
 
   public B2WorldCreator(PlayScreen screen) {
     World world = screen.getWorld();
@@ -40,19 +43,23 @@ public class B2WorldCreator {
       body.createFixture(fdef);
     }
 
-    // create stone bodies/ fixtures
-        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
-          Rectangle rect = ((RectangleMapObject) object).getRectangle();
-
-          new Stone(screen, object);
-        }
-
-//    // create gobling bodies/fixtures
-//    for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
-//      Rectangle rect = ((RectangleMapObject) object).getRectangle();
+//    // create stone bodies/ fixtures
+//        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
+//          Rectangle rect = ((RectangleMapObject) object).getRectangle();
 //
-//      new Gobling(world, map, rect);
-//    }
+//          new Stone(screen, object);
+//        }
 
+    // create gobling bodies/fixtures
+    goblings = new Array<Gobling>();
+    for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+      Rectangle rect = ((RectangleMapObject) object).getRectangle();
+      goblings.add(new Gobling(screen, rect.getX() / RhythmKnight.PPM, rect.getY() / RhythmKnight.PPM));
+    }
   }
+
+  public Array<Gobling> getGoblings() {
+    return goblings;
+  }
+
 }

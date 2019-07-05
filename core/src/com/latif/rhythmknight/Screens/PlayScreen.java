@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
+import com.latif.rhythmknight.Sprites.Enemy;
 import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.InteractiveTileObject;
 import com.latif.rhythmknight.Sprites.RKnight;
@@ -42,16 +43,13 @@ public class PlayScreen implements Screen {
 
   // sprites
   private RKnight player;
-  private Gobling gobling;
-
-  private ArrayList<Gobling> goblings;
 
   // music
   private Music music;
 
   // Cutscene variables
   // boolean representing if cutscene has been executed
-  private boolean cameraPositioned = true;
+  private boolean cameraPositioned = false;
   private final float cameraStop = 5.0f;
   private final float cameraSpeed = 0.5f;
 
@@ -59,6 +57,8 @@ public class PlayScreen implements Screen {
   private World world;
   // provides a graphical representation of fixtures and bodies within box2d world
   private Box2DDebugRenderer b2dr;
+
+  private B2WorldCreator creator;
 
   // loads the map into the game
   private TmxMapLoader mapLoader;
@@ -108,16 +108,10 @@ public class PlayScreen implements Screen {
     b2dr = new Box2DDebugRenderer();
 
     // create B2WorldCreator
-    new B2WorldCreator(this);
+   creator = new B2WorldCreator(this);
 
     // create entity objects in our game world for the active PlayScreen
     player = new RKnight(this);
-    gobling = new Gobling(this, 2.8f, .32f);
-
-    // add a number of goblings to list
-    for (int i = 0; i < 4; i++) {
-      goblings.add(new Gobling(this, 2.8f, 0.32f));
-    }
 
     // identifying collision objects
     world.setContactListener(new WorldContactListener());
@@ -184,19 +178,9 @@ public class PlayScreen implements Screen {
 
   }
 
-  public void respawnGobling() {
-    if (goblings.size() != 0) {
-      Gobling gob = goblings.get(0);
-      goblings.remove(0);
-      Gobling.death = 0;
-    }
-  }
 
   public void update(float deltaTime) {
 
-    if (Gobling.death == 2) {
-      respawnGobling();
-    }
 
     // handles any key inputs or events
     handleInput(deltaTime);
@@ -210,7 +194,10 @@ public class PlayScreen implements Screen {
 
     //update for sprites
     player.update(deltaTime);
-    gobling.update(deltaTime);
+
+    for (Enemy enemy : creator.getGoblings()) {
+      enemy.update(deltaTime);
+    }
 
     // always update the camera at every iteration of our render cycle
     gameCam.update();
@@ -240,8 +227,11 @@ public class PlayScreen implements Screen {
 
     // set up the batch for drawing
     game.batch.begin();
-    gobling.draw(game.batch);
     player.draw(game.batch);
+
+    for (Enemy enemy : creator.getGoblings()) {
+      enemy.draw(game.batch);
+    }
 
     // end batch drawing
     game.batch.end();

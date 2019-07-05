@@ -1,5 +1,7 @@
 package com.latif.rhythmknight.Sprites;
 
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -60,6 +62,7 @@ public class Gobling extends Enemy {
     stateTime += deltaTime;
     if (setToDestroy && !destroyed) {
       world.destroyBody(b2body);
+      death += 1;
       destroyed = true;
       setRegion(goblingDie.getKeyFrame(stateTime, true));
       stateTime = 0;
@@ -130,7 +133,6 @@ public class Gobling extends Enemy {
   public void draw(Batch batch){
     if(!destroyed || stateTime < 1)
       super.draw(batch);
-    death += 1;
   }
 
   @Override
@@ -138,6 +140,7 @@ public class Gobling extends Enemy {
     if (RKnight.isAttacking) {
       setToDestroy = true;
       System.out.println("HITTING HEAD");
+      RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(0.5f);
     }
   }
 

@@ -105,7 +105,7 @@ public class RKnight extends Sprite {
   public void defineRKnight() {
     // define body of sprite
     BodyDef bdef = new BodyDef();
-    bdef.position.set(60 / RhythmKnight.PPM, 128 / RhythmKnight.PPM);
+    bdef.position.set(120 / RhythmKnight.PPM, 150 / RhythmKnight.PPM);
     bdef.type = BodyDef.BodyType.DynamicBody;
     b2body = world.createBody(bdef);
 

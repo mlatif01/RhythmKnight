@@ -20,7 +20,7 @@ public abstract class Enemy extends Sprite {
     this.screen = screen;
     setPosition(x, y);
     defineEnemy();
-    velocity = new Vector2(-0.8f, 0f);
+    velocity = new Vector2(-0.5f, 0f);
     b2body.setActive(false);
   }
 
@@ -30,6 +30,8 @@ public abstract class Enemy extends Sprite {
   public abstract void hitOnHead();
 
   public abstract void touchingRKnight();
+
+  public abstract void update(float deltaTime);
 
   public void reverseVelocity(boolean x, boolean y) {
     if (x) {
