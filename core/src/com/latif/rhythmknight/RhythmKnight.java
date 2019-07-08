@@ -41,11 +41,13 @@ public class RhythmKnight extends Game {
 		// create Asset Manager and load assets
 		manager = new AssetManager();
 		manager.load("audio/music/background.ogg", Music.class);
+		manager.load("audio/music/background2.ogg", Music.class);
 		manager.load("audio/sounds/footsteps.wav", Sound.class);
 		manager.load("audio/sounds/swordsound.wav", Music.class);
 		manager.load("audio/sounds/meleesound.wav", Sound.class);
 		manager.load("audio/sounds/breakblock.wav", Sound.class);
 		manager.load("audio/sounds/goblingdie.wav", Sound.class);
+		manager.load("audio/sounds/goblinghit.wav", Sound.class);
 
 
 		// finish loading assets

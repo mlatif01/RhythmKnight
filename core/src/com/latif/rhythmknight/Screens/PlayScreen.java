@@ -4,12 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -21,15 +18,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Sprites.Enemy;
-import com.latif.rhythmknight.Sprites.Gobling;
-import com.latif.rhythmknight.Sprites.InteractiveTileObject;
 import com.latif.rhythmknight.Sprites.RKnight;
-import com.latif.rhythmknight.Sprites.Stone;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
-import com.latif.rhythmknight.Tools.CutSceneController;
 import com.latif.rhythmknight.Tools.WorldContactListener;
-
-import java.util.ArrayList;
 
 public class PlayScreen implements Screen {
 
@@ -74,7 +65,7 @@ public class PlayScreen implements Screen {
   private Viewport gamePort;
 
   // Cutscene controller which initiates cutscenes
-  private CutSceneController cutSceneController;
+//  private CutSceneController cutSceneController;
 
   // Constructor for initialising the playscreen - as we need to send the game to the screen
   public PlayScreen(RhythmKnight game) {
@@ -108,7 +99,7 @@ public class PlayScreen implements Screen {
     b2dr = new Box2DDebugRenderer();
 
     // create B2WorldCreator
-   creator = new B2WorldCreator(this);
+    creator = new B2WorldCreator(this);
 
     // create entity objects in our game world for the active PlayScreen
     player = new RKnight(this);
@@ -117,9 +108,9 @@ public class PlayScreen implements Screen {
     world.setContactListener(new WorldContactListener());
 
     // set up music for the current Screen
-    music = RhythmKnight.manager.get("audio/music/background.ogg", Music.class);
+    music = RhythmKnight.manager.get("audio/music/background2.ogg", Music.class);
     music.setLooping(true);
-    music.setVolume(0.1f);
+    music.setVolume(0.5f);
     music.play();
   }
 
@@ -127,7 +118,10 @@ public class PlayScreen implements Screen {
   public TextureAtlas getAtlas() {
     return atlas;
   }
-  public TextureAtlas getAtlas_2() {return atlas_2;}
+
+  public TextureAtlas getAtlas_2() {
+    return atlas_2;
+  }
 
   @Override
   public void show() {
@@ -165,14 +159,14 @@ public class PlayScreen implements Screen {
       player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && (player.b2body.getLinearVelocity().x <= 2)
-    && player.canMove) {
+            && player.canMove) {
       player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
     }
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (player.b2body.getLinearVelocity().x >= -2)
-    && player.canMove) {
+            && player.canMove) {
       player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
     }
-    if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+    if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
       player.handleSlash();
     }
 
@@ -194,6 +188,12 @@ public class PlayScreen implements Screen {
 
     //update for sprites
     player.update(deltaTime);
+
+    // update Hud
+    hud.update(deltaTime);
+
+    // update variables on the Hud
+    hud.update(deltaTime);
 
     for (Enemy enemy : creator.getGoblings()) {
       enemy.update(deltaTime);

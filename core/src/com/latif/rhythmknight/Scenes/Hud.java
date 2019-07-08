@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
+import com.latif.rhythmknight.Sprites.RKnight;
 
 public class Hud implements Disposable {
 
@@ -23,18 +24,18 @@ public class Hud implements Disposable {
   private Viewport viewport;
 
   // player score
-  private Integer score;
+  private static Integer score;
 
   // player HP (This should go in another class!)
-  private Integer hp = 50;
+  private Integer hp = RKnight.getHp();
 
   // (Widgets from library Scene2d) A text label with optional word wrapping
-  Label rhythmKnightLabel;
-  Label scoreLabel;
-  Label hpLabel;
-  Label rhythmKnightHpLabel;
-  Label stageLabel;
-  Label levelLabel;
+  private Label rhythmKnightLabel;
+  private static Label scoreLabel;
+  private Label hpLabel;
+  private Label rhythmKnightHpLabel;
+  private Label stageLabel;
+  private Label levelLabel;
 
   public Hud(SpriteBatch sb) {
     score = 0;
@@ -76,6 +77,16 @@ public class Hud implements Disposable {
 
     // adds the table to the stage
     stage.addActor(table);
+  }
+
+  public static void updateScore(int value) {
+    score += value;
+    scoreLabel.setText(String.format("%06d", score));
+  }
+
+  public void update(float deltaTime) {
+    hp = RKnight.getHp();
+    rhythmKnightHpLabel.setText((String.format("%02d", hp)));
   }
 
   @Override

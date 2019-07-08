@@ -43,7 +43,7 @@ public class B2WorldCreator {
       body.createFixture(fdef);
     }
 
-//    // create stone bodies/ fixtures
+    // create stone bodies/ fixtures
 //        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
 //          Rectangle rect = ((RectangleMapObject) object).getRectangle();
 //

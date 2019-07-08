@@ -37,6 +37,8 @@ public class RKnight extends Sprite {
   // state to check if RKnight is ready to battle
   public static boolean readyToBattle = false;
 
+  // float representing RKnights HP
+  private static Integer hp = 50;
 
   // the world that RK lives in
   public World world;
@@ -80,6 +82,9 @@ public class RKnight extends Sprite {
     currentState = State.IDLE_SHEATHED;
     previousState = State.IDLE_SHEATHED;
     nextAttackState = AttackState.ATTACK1;
+
+    // initialise hp - default set as 50
+    hp = 50;
 
     stateTimer = 0;
     runningRight = true;
@@ -137,10 +142,6 @@ public class RKnight extends Sprite {
   // update state of RKnight sprite
   public void update(float deltaTime) {
 
-    if (WorldContactListener.isSwordOnObject()) {
-
-    }
-
     // if running left fix position
     if (!runningRight) {
       setPosition(b2body.getPosition().x - getWidth() / 2 + xPadding, b2body.getPosition().y - getHeight() / 2);
@@ -162,6 +163,14 @@ public class RKnight extends Sprite {
       b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
       RhythmKnight.manager.get("audio/sounds/swordsound.wav", Music.class).play();
     }
+  }
+
+  public static Integer getHp() {
+    return hp;
+  }
+
+  public static void reduceHp() {
+    hp -= 10;
   }
 
   private TextureRegion getFrame(float deltaTime) {
@@ -202,10 +211,10 @@ public class RKnight extends Sprite {
     }
 
     // if not running right, flip x axis to look left
-//    if ((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
-//      region.flip(true, false);
-//      runningRight = false;
-//    }
+    if ((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
+      region.flip(true, false);
+      runningRight = false;
+    }
 
     // if running right, flip x axis to look right
     if ((b2body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX()) {
