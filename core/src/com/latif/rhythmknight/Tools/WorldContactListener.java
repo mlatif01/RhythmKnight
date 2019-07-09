@@ -1,5 +1,7 @@
 package com.latif.rhythmknight.Tools;
 
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -40,7 +42,7 @@ public class WorldContactListener implements ContactListener {
       // if user data is null, if not check if user data is an Enemy
       if (object.getUserData() != null && object.getUserData() instanceof Enemy) {
         // if TileObject in range of sword and player is attacking call respective methods
-        ((Enemy) object.getUserData()).hitOnHead();
+//        ((Enemy) object.getUserData()).hitOnHead();
         if (swordOnObject) {
           System.out.println("SWORD IS ON GOBLING FROM A: " + isSwordOnObject());
           ((Enemy) object.getUserData()).hitOnHead();
@@ -89,7 +91,22 @@ public class WorldContactListener implements ContactListener {
   // when something has collided you can change the characteristics of that collision
   @Override
   public void preSolve(Contact contact, Manifold oldManifold) {
+    // define the fixtures which are colliding
+    Fixture fixA = contact.getFixtureA();
+    Fixture fixB = contact.getFixtureB();
+//
+    int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
 
+    // switch statement  to check for collision with gobling head
+    switch (cDef) {
+      case RhythmKnight
+              .GOBLING_BIT | RhythmKnight.RKNIGHT_BIT:
+        // when gobling touches player, player will not move
+        if (fixB.getFilterData().categoryBits == RhythmKnight.GOBLING_BIT) {
+          fixB.getBody().setLinearVelocity(0f, 0f);
+        }
+        break;
+    }
   }
 
   // gives results of what happened due to that collision
@@ -109,26 +126,32 @@ public class WorldContactListener implements ContactListener {
       Fixture sword = fixA.getUserData() == "sword" ? fixA : fixB;
       Fixture object = sword == fixA ? fixB : fixA;
 
-
-
     // switch statement  to check for collision with gobling head
     switch (cDef) {
       case RhythmKnight
               .GOBLING_HEAD_BIT | RhythmKnight.SWORD_BIT:
         if (fixA.getFilterData().categoryBits == RhythmKnight.GOBLING_HEAD_BIT) {
-          ((Enemy)fixA.getUserData()).hitOnHead();
+//          ((Enemy)fixA.getUserData()).hitOnHead();
         }
         else if (fixB.getFilterData().categoryBits == RhythmKnight.GOBLING_HEAD_BIT) {
-          ((Enemy)fixB.getUserData()).hitOnHead();
+//          ((Enemy)fixB.getUserData()).hitOnHead();
         }
         break;
       case RhythmKnight
               .GOBLING_BIT | RhythmKnight.RKNIGHT_BIT:
         if (fixA.getFilterData().categoryBits == RhythmKnight.GOBLING_BIT) {
           ((Enemy)fixA.getUserData()).touchingRKnight();
+          // if RK dead play death sound
+          if (RKnight.getHp() <= 0) {
+            RhythmKnight.manager.get("audio/sounds/rkdeath.wav", Sound.class).play();
+          }
         }
         else if (fixB.getFilterData().categoryBits == RhythmKnight.GOBLING_BIT) {
           ((Enemy)fixB.getUserData()).touchingRKnight();
+          // if RK dead play death sound
+          if (RKnight.getHp() <= 0) {
+            RhythmKnight.manager.get("audio/sounds/rkdeath.wav", Sound.class).play();
+          }
         }
         break;
     }

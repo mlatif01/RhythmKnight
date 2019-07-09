@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -23,12 +24,14 @@ import com.latif.rhythmknight.Tools.WorldContactListener;
 
 public class RKnight extends Sprite {
 
+  private static boolean RKnightIsDead = false;
+
   public void message() {
     System.out.println("YES");
   }
 
   // ENUM for RKnight states
-  public enum State {IDLE_SHEATHED, IDLE_UNSHEATHED, DRAWING_SWORD, RUNNING, JUMPING, FALLING, ATTACKING_1, ATTACKING_2};
+  public enum State {IDLE_SHEATHED, IDLE_UNSHEATHED, DRAWING_SWORD, RUNNING, JUMPING, FALLING, ATTACKING_1, ATTACKING_2, DEAD};
   public enum AttackState {ATTACK1, ATTACK2}
   public State currentState;
   public State previousState;
@@ -38,7 +41,7 @@ public class RKnight extends Sprite {
   public static boolean readyToBattle = false;
 
   // float representing RKnights HP
-  private static Integer hp = 50;
+  private static Integer hp = 10;
 
   // the world that RK lives in
   public World world;
@@ -82,9 +85,6 @@ public class RKnight extends Sprite {
     currentState = State.IDLE_SHEATHED;
     previousState = State.IDLE_SHEATHED;
     nextAttackState = AttackState.ATTACK1;
-
-    // initialise hp - default set as 50
-    hp = 50;
 
     stateTimer = 0;
     runningRight = true;
@@ -165,6 +165,14 @@ public class RKnight extends Sprite {
     }
   }
 
+  public static boolean isDead() {
+    return RKnightIsDead;
+  }
+
+  public float getStateTimer() {
+    return stateTimer;
+  }
+
   public static Integer getHp() {
     return hp;
   }
@@ -230,7 +238,12 @@ public class RKnight extends Sprite {
   }
 
   private State getState() {
-    if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
+    // first check if player has hp
+    if (hp <= 0) {
+      RKnightIsDead = true;
+      return State.DEAD;
+    }
+    else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
       return State.JUMPING;
     }
     // logic for performing full set of attack frames
