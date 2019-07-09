@@ -1,38 +1,34 @@
 package com.latif.rhythmknight.Sprites;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.MassData;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Screens.PlayScreen;
-import com.latif.rhythmknight.Tools.WorldContactListener;
 
 
 public class RKnight extends Sprite {
 
+  // boolean representing whether rk is dead
   private static boolean RKnightIsDead = false;
 
-  public void message() {
-    System.out.println("YES");
+  // ENUM for RKnight states
+  public enum State {
+    IDLE_SHEATHED, IDLE_UNSHEATHED, DRAWING_SWORD, RUNNING, JUMPING, FALLING, ATTACKING_1, ATTACKING_2, ATTACKING_3, DEAD
   }
 
-  // ENUM for RKnight states
-  public enum State {IDLE_SHEATHED, IDLE_UNSHEATHED, DRAWING_SWORD, RUNNING, JUMPING, FALLING, ATTACKING_1, ATTACKING_2, DEAD};
-  public enum AttackState {ATTACK1, ATTACK2}
+  public enum AttackState {ATTACK1, ATTACK2, ATTACK3};
+
   public State currentState;
   public State previousState;
   public AttackState nextAttackState;
@@ -41,7 +37,7 @@ public class RKnight extends Sprite {
   public static boolean readyToBattle = false;
 
   // float representing RKnights HP
-  private static Integer hp = 10;
+  private static Integer hp;
 
   // the world that RK lives in
   public World world;
@@ -62,6 +58,9 @@ public class RKnight extends Sprite {
   private Animation<TextureRegion> rKnightJump;
   private Animation<TextureRegion> rKnightAttack;
   private Animation<TextureRegion> rKnightAttack2;
+  private Animation<TextureRegion> rKnightAttack3;
+  private Animation<TextureRegion> rKnightDead;
+
 
   // state timer for animation frames
   private float stateTimer;
@@ -76,10 +75,18 @@ public class RKnight extends Sprite {
   // float used as offset for end of slash animation
   private float attackAniOffset = 1.5f;
 
+  private TextureAtlas atlas_3;
 
   public RKnight(PlayScreen screen) {
+
     // get sprite actions for idle RKnight - initial frame
     super(screen.getAtlas().findRegion("adventurer-idle-00"));
+
+    // set hp
+    hp = 50;
+
+    // temporary atlas for alternative animations
+    this.atlas_3 = screen.getAtlas_3();
 
     // initialise variables for animations
     currentState = State.IDLE_SHEATHED;
@@ -117,7 +124,7 @@ public class RKnight extends Sprite {
     // define fixture of sprite
     FixtureDef fdef = new FixtureDef();
     PolygonShape shape = new PolygonShape();
-    shape.setAsBox(6 / RhythmKnight.PPM,24 / RhythmKnight.PPM);
+    shape.setAsBox(6 / RhythmKnight.PPM, 24 / RhythmKnight.PPM);
     fdef.filter.categoryBits = RhythmKnight.RKNIGHT_BIT;
     // set what RKnight can collide with
     fdef.filter.maskBits = RhythmKnight.GROUND_BIT | RhythmKnight.STONE_BIT | RhythmKnight.OBJECT_BIT |
@@ -128,7 +135,7 @@ public class RKnight extends Sprite {
 
     // define and create fixture for sword
     EdgeShape sword = new EdgeShape();
-    sword.set(new Vector2(25 / RhythmKnight.PPM, 20/ RhythmKnight.PPM), new Vector2(5 / RhythmKnight.PPM, 1/ RhythmKnight.PPM));
+    sword.set(new Vector2(25 / RhythmKnight.PPM, 20 / RhythmKnight.PPM), new Vector2(5 / RhythmKnight.PPM, 1 / RhythmKnight.PPM));
     fdef.isSensor = true;
     fdef.filter.categoryBits = RhythmKnight.SWORD_BIT;
     // set what sword can collide with
@@ -145,10 +152,9 @@ public class RKnight extends Sprite {
     // if running left fix position
     if (!runningRight) {
       setPosition(b2body.getPosition().x - getWidth() / 2 + xPadding, b2body.getPosition().y - getHeight() / 2);
-    }
-    else {
+    } else {
       // offset position of sprite - using xPadding to center sprite within the fixture
-      setPosition((b2body.getPosition().x  - getWidth() / 2) - xPadding, b2body.getPosition().y - getHeight() / 2);
+      setPosition((b2body.getPosition().x - getWidth() / 2) - xPadding, b2body.getPosition().y - getHeight() / 2);
     }
     // this method returns the appropriate frame which needs to be displayed as the sprites texture region
     setRegion(getFrame(deltaTime));
@@ -181,11 +187,15 @@ public class RKnight extends Sprite {
     hp -= 10;
   }
 
+  public static void setHp(int i) {
+    hp = i;
+  }
+
   private TextureRegion getFrame(float deltaTime) {
     currentState = getState();
     TextureRegion region = null;
 
-    switch(currentState) {
+    switch (currentState) {
       case JUMPING:
         region = rKnightJump.getKeyFrame(stateTimer);
         break;
@@ -203,16 +213,21 @@ public class RKnight extends Sprite {
         break;
       // two different attack states
       case ATTACKING_1:
-          region = rKnightAttack.getKeyFrame(stateTimer, true);
+        region = rKnightAttack.getKeyFrame(stateTimer, true);
         break;
       case ATTACKING_2:
         region = rKnightAttack2.getKeyFrame(stateTimer, true);
         break;
+      case ATTACKING_3:
+        region = region = rKnightAttack3.getKeyFrame(stateTimer, true);
+        break;
+      case DEAD:
+        region = rKnightDead.getKeyFrame(stateTimer, false);
+        break;
       default:
         if (readyToBattle) {
           region = rKnightIdleUnsheathed.getKeyFrame(stateTimer, true);
-        }
-        else if (!readyToBattle) {
+        } else if (!readyToBattle) {
           region = rKnightIdleSheathed.getKeyFrame(stateTimer, true);
         }
         break;
@@ -242,8 +257,7 @@ public class RKnight extends Sprite {
     if (hp <= 0) {
       RKnightIsDead = true;
       return State.DEAD;
-    }
-    else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
+    } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
       return State.JUMPING;
     }
     // logic for performing full set of attack frames
@@ -259,6 +273,8 @@ public class RKnight extends Sprite {
       if (!isAttacking) {
         if (nextAttackState == AttackState.ATTACK1) {
           nextAttackState = AttackState.ATTACK2;
+        } else if (nextAttackState == AttackState.ATTACK2) {
+          nextAttackState = AttackState.ATTACK3;
         }
         else {
           nextAttackState = AttackState.ATTACK1;
@@ -266,15 +282,17 @@ public class RKnight extends Sprite {
       }
       if (nextAttackState == AttackState.ATTACK1) {
         return State.ATTACKING_1;
-      }
-      else {
+      } else if (nextAttackState == AttackState.ATTACK2) {
         return State.ATTACKING_2;
       }
-    }
-    else if (b2body.getLinearVelocity().y < 0) {
+      else {
+        return State.ATTACKING_3;
+      }
+
+
+    } else if (b2body.getLinearVelocity().y < 0) {
       return State.FALLING;
-    }
-    else if (b2body.getLinearVelocity().x != 0) {
+    } else if (b2body.getLinearVelocity().x != 0) {
       return State.RUNNING;
     }
 //    else if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
@@ -334,23 +352,46 @@ public class RKnight extends Sprite {
 
     // set up attack1 animation frames
     int xpad = 10;
-    frames.add(new TextureRegion(getTexture(), 1+xpad, 61, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 1+xpad, 22, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 53+xpad, 61, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 53+xpad, 22, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 105+xpad, 61, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 1 + xpad, 61, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 1 + xpad, 22, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 53 + xpad, 61, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 53 + xpad, 22, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 105 + xpad, 61, 37, 37));
     rKnightAttack = new Animation(0.1f, frames);
     frames.clear();
 
     // set up attack2 animation frames
     // padding for slash animation
-    frames.add(new TextureRegion(getTexture(), 105+xpad, 22, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 157+xpad, 61, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 157+xpad, 22, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 209+xpad, 61, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 209+xpad, 22, 37, 37));
-    frames.add(new TextureRegion(getTexture(), 261+xpad, 79, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 105 + xpad, 22, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 157 + xpad, 61, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 157 + xpad, 22, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 209 + xpad, 61, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 209 + xpad, 22, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 261 + xpad, 79, 37, 37));
     rKnightAttack2 = new Animation(0.1f, frames);
+    frames.clear();
+
+    // set up attack3 animation frames
+    // padding for slash animation
+    xpad = 7;
+    frames.add(new TextureRegion(getTexture(), 261, 40, 40, 37));
+    frames.add(new TextureRegion(getTexture(), 313, 79, 40, 37));
+    frames.add(new TextureRegion(getTexture(), 313 + xpad, 40, 44, 37));
+    frames.add(new TextureRegion(getTexture(), 365 + xpad, 79, 44, 37));
+    frames.add(new TextureRegion(getTexture(), 365, 40, 37, 37));
+    frames.add(new TextureRegion(getTexture(), 417, 79, 37, 37));
+    rKnightAttack3 = new Animation(0.105f, frames);
+    frames.clear();
+
+    //set up death animation
+    frames.add(new TextureRegion(atlas_3.getTextures().first(), 209, 40, 37, 37));
+    frames.add(new TextureRegion(atlas_3.getTextures().first(), 261, 79, 37, 37));
+    frames.add(new TextureRegion(atlas_3.getTextures().first(), 313, 118, 37, 37));
+    frames.add(new TextureRegion(atlas_3.getTextures().first(), 365, 157, 37, 37));
+    frames.add(new TextureRegion(atlas_3.getTextures().first(), 417, 196, 37, 37));
+    frames.add(new TextureRegion(atlas_3.getTextures().first(), 209, 1, 37, 37));
+    frames.add(new TextureRegion(atlas_3.getTextures().first(), 417, 196, 37, 37));
+    rKnightDead = new Animation<TextureRegion>(0.1f, frames);
     frames.clear();
   }
 

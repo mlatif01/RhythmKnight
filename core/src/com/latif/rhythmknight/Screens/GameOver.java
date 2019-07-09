@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
+import com.latif.rhythmknight.Sprites.RKnight;
 
 public class GameOver implements Screen {
   private Viewport viewport;
@@ -33,7 +34,11 @@ public class GameOver implements Screen {
     table.setFillParent(true);
 
     Label gameOverLabel = new Label("GAME OVER", font);
+    Label playAgainLabel = new Label("Click to Play Again", font);
+
     table.add(gameOverLabel).expandX();
+    table.row();
+    table.add(playAgainLabel).expandX().padTop(10f);
 
     stage.addActor(table);
   }
@@ -46,6 +51,11 @@ public class GameOver implements Screen {
 
   @Override
   public void render(float delta) {
+    // restart game when screen is touched
+    if(Gdx.input.justTouched()) {
+      game.setScreen(new PlayScreen((RhythmKnight) game));
+      dispose();
+    }
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     stage.draw();
@@ -73,7 +83,7 @@ public class GameOver implements Screen {
 
   @Override
   public void dispose() {
-
+    stage.dispose();
   }
 
 }

@@ -57,7 +57,7 @@ public class Hud implements Disposable {
             Color.WHITE));
     hpLabel = new Label("HP", new Label.LabelStyle(new BitmapFont(),
             Color.WHITE));
-    rhythmKnightHpLabel = new Label(String.format("%02d", hp), new Label.LabelStyle(new BitmapFont(),
+    rhythmKnightHpLabel = new Label(String.format("%02d", RKnight.getHp()), new Label.LabelStyle(new BitmapFont(),
             Color.WHITE));
     stageLabel = new Label("STAGE", new Label.LabelStyle(new BitmapFont(),
             Color.WHITE));
@@ -85,9 +85,13 @@ public class Hud implements Disposable {
   }
 
   public void update(float deltaTime) {
-    if (hp > 0) {
-      hp = RKnight.getHp();
-      rhythmKnightHpLabel.setText((String.format("%02d", hp)));
+    // if rk alive then set hp to current hp value
+    if (RKnight.getHp() > 0) {
+      rhythmKnightHpLabel.setText((String.format("%02d", RKnight.getHp())));
+    }
+    // if rk dead set hp to 0
+    else if (RKnight.getHp() <= 0) {
+      rhythmKnightHpLabel.setText((String.format("%02d", 0)));
     }
   }
 

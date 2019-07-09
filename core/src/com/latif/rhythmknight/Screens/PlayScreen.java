@@ -29,6 +29,7 @@ public class PlayScreen implements Screen {
   private RhythmKnight game;
   private TextureAtlas atlas;
   private TextureAtlas atlas_2;
+  private TextureAtlas atlas_3;
 
   // reference to the Hud
   private Hud hud;
@@ -41,7 +42,7 @@ public class PlayScreen implements Screen {
 
   // Cutscene variables
   // boolean representing if cutscene has been executed
-  private boolean cameraPositioned = false;
+  private boolean cameraPositioned = true;
   private final float cameraStop = 5.0f;
   private final float cameraSpeed = 0.5f;
 
@@ -73,6 +74,7 @@ public class PlayScreen implements Screen {
     // create TextureAtlas based on spritesheets
     atlas = new TextureAtlas("RKGraphics.pack");
     atlas_2 = new TextureAtlas("slime_graphics.pack");
+    atlas_3 = new TextureAtlas("rkgraphics2.pack");
 
     this.game = game;
 
@@ -82,9 +84,6 @@ public class PlayScreen implements Screen {
     // create FitViewport to maintain virtual aspect ratio despite screen size - scale to PPM
     gamePort = new FitViewport(RhythmKnight.V_WIDTH / RhythmKnight.PPM,
             RhythmKnight.V_HEIGHT / RhythmKnight.PPM, gameCam);
-
-    // create game HUD for scores/hp/level
-    hud = new Hud(game.batch);
 
     // create, load and render our game map
     mapLoader = new TmxMapLoader();
@@ -105,6 +104,9 @@ public class PlayScreen implements Screen {
     // create entity objects in our game world for the active PlayScreen
     player = new RKnight(this);
 
+    // create game HUD for scores/hp/level
+    hud = new Hud(game.batch);
+
     // identifying collision objects
     world.setContactListener(new WorldContactListener());
 
@@ -117,6 +119,8 @@ public class PlayScreen implements Screen {
 
   public boolean gameOver() {
     if (player.currentState == RKnight.State.DEAD && player.getStateTimer() > 3) {
+      // stop music when player dies
+      music.stop();
       return true;
     }
     return false;
@@ -130,6 +134,11 @@ public class PlayScreen implements Screen {
   public TextureAtlas getAtlas_2() {
     return atlas_2;
   }
+
+  public TextureAtlas getAtlas_3() {
+    return atlas_3;
+  }
+
 
   @Override
   public void show() {
@@ -174,7 +183,7 @@ public class PlayScreen implements Screen {
             && player.canMove) {
       player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
     }
-    if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+    if (Gdx.input.isTouched()) {
       player.handleSlash();
     }
 
