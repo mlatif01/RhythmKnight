@@ -27,7 +27,7 @@ public class Hud implements Disposable {
   private static Integer score;
 
   // player HP (This should go in another class!)
-  private Integer hp = RKnight.getHp();
+  private static Integer hp;
 
   // (Widgets from library Scene2d) A text label with optional word wrapping
   private Label rhythmKnightLabel;
@@ -39,7 +39,7 @@ public class Hud implements Disposable {
 
   public Hud(SpriteBatch sb) {
     score = 0;
-
+    hp = RKnight.getHp();
     viewport = new FitViewport(RhythmKnight.V_WIDTH, RhythmKnight.V_HEIGHT, new OrthographicCamera());
     stage = new Stage(viewport, sb);
 
@@ -85,8 +85,10 @@ public class Hud implements Disposable {
   }
 
   public void update(float deltaTime) {
-    hp = RKnight.getHp();
-    rhythmKnightHpLabel.setText((String.format("%02d", hp)));
+    if (hp > 0) {
+      hp = RKnight.getHp();
+      rhythmKnightHpLabel.setText((String.format("%02d", hp)));
+    }
   }
 
   @Override

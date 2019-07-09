@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -112,6 +113,13 @@ public class PlayScreen implements Screen {
     music.setLooping(true);
     music.setVolume(0.5f);
     music.play();
+  }
+
+  public boolean gameOver() {
+    if (player.currentState == RKnight.State.DEAD && player.getStateTimer() > 3) {
+      return true;
+    }
+    return false;
   }
 
   // getter for atlas'
@@ -242,6 +250,11 @@ public class PlayScreen implements Screen {
     game.batch.setProjectionMatrix(hud.stage.getCamera().combined);
     hud.stage.draw();
 
+    if (gameOver()) {
+//      RhythmKnight.manager.clear();
+      game.setScreen(new GameOver(game));
+      dispose();
+    }
 
   }
 

@@ -48,6 +48,7 @@ public class RhythmKnight extends Game {
 		manager.load("audio/sounds/breakblock.wav", Sound.class);
 		manager.load("audio/sounds/goblingdie.wav", Sound.class);
 		manager.load("audio/sounds/goblinghit.wav", Sound.class);
+		manager.load("audio/sounds/rkdeath.wav", Sound.class);
 
 
 		// finish loading assets

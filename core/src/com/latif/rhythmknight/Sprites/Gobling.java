@@ -113,7 +113,6 @@ public class Gobling extends Enemy {
             RhythmKnight.OBJECT_BIT | RhythmKnight.RKNIGHT_BIT | RhythmKnight.SWORD_BIT;
     // create fixture of sprite
     fdef.shape = shape;
-    fdef.restitution = 0f;
     b2body.createFixture(fdef).setUserData(this);
 
     // create hit range here
@@ -140,6 +139,7 @@ public class Gobling extends Enemy {
   @Override
   public void hitOnHead() {
     if (RKnight.isAttacking) {
+
       setToDestroy = true;
       System.out.println("HITTING HEAD");
       Hud.updateScore(100);
