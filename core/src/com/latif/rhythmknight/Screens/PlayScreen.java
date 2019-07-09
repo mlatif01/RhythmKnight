@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Sprites.Enemy;
+import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
 import com.latif.rhythmknight.Tools.WorldContactListener;
@@ -42,7 +43,7 @@ public class PlayScreen implements Screen {
 
   // Cutscene variables
   // boolean representing if cutscene has been executed
-  private boolean cameraPositioned = true;
+  private boolean cameraPositioned = false;
   private final float cameraStop = 5.0f;
   private final float cameraSpeed = 0.5f;
 
@@ -118,12 +119,18 @@ public class PlayScreen implements Screen {
   }
 
   public boolean gameOver() {
-    if (player.currentState == RKnight.State.DEAD && player.getStateTimer() > 3) {
+    if ( (player.currentState == RKnight.State.DEAD && player.getStateTimer() > 3)) {
       // stop music when player dies
       music.stop();
       return true;
     }
-    return false;
+    else if (Gobling.death == 20 && player.getStateTimer() > 3) {
+      music.stop();
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
   // getter for atlas'
@@ -237,7 +244,7 @@ public class PlayScreen implements Screen {
     mapRenderer.render();
 
     // render our Box2dDebugLines
-    b2dr.render(world, gameCam.combined);
+//    b2dr.render(world, gameCam.combined);
 
     // set only what the game can see
     game.batch.setProjectionMatrix(gameCam.combined);

@@ -36,8 +36,15 @@ public class RKnight extends Sprite {
   // state to check if RKnight is ready to battle
   public static boolean readyToBattle = false;
 
+  // check if b2body has been destroyed
+  public boolean setToDestroy = false;
+  public boolean bodyDestroyed = false;
+
   // float representing RKnights HP
   private static Integer hp;
+
+  // current HP
+  private final Integer currentHp = 30;
 
   // the world that RK lives in
   public World world;
@@ -83,7 +90,7 @@ public class RKnight extends Sprite {
     super(screen.getAtlas().findRegion("adventurer-idle-00"));
 
     // set hp
-    hp = 50;
+    hp = currentHp;
 
     // temporary atlas for alternative animations
     this.atlas_3 = screen.getAtlas_3();
@@ -149,12 +156,17 @@ public class RKnight extends Sprite {
   // update state of RKnight sprite
   public void update(float deltaTime) {
 
-    // if running left fix position
-    if (!runningRight) {
-      setPosition(b2body.getPosition().x - getWidth() / 2 + xPadding, b2body.getPosition().y - getHeight() / 2);
-    } else {
-      // offset position of sprite - using xPadding to center sprite within the fixture
-      setPosition((b2body.getPosition().x - getWidth() / 2) - xPadding, b2body.getPosition().y - getHeight() / 2);
+    if (setToDestroy && !bodyDestroyed) {
+      world.destroyBody(b2body);
+      bodyDestroyed = true;
+    } else if (!bodyDestroyed) {
+      // if running left fix position
+      if (!runningRight) {
+        setPosition(b2body.getPosition().x - getWidth() / 2 + xPadding, b2body.getPosition().y - getHeight() / 2);
+      } else {
+        // offset position of sprite - using xPadding to center sprite within the fixture
+        setPosition((b2body.getPosition().x - getWidth() / 2) - xPadding, b2body.getPosition().y - getHeight() / 2);
+      }
     }
     // this method returns the appropriate frame which needs to be displayed as the sprites texture region
     setRegion(getFrame(deltaTime));
@@ -219,10 +231,10 @@ public class RKnight extends Sprite {
         region = rKnightAttack2.getKeyFrame(stateTimer, true);
         break;
       case ATTACKING_3:
-        region = region = rKnightAttack3.getKeyFrame(stateTimer, true);
+        region = rKnightAttack3.getKeyFrame(stateTimer, true);
         break;
       case DEAD:
-        region = rKnightDead.getKeyFrame(stateTimer, false);
+        region = rKnightDead.getKeyFrame(stateTimer - 2f, false);
         break;
       default:
         if (readyToBattle) {
@@ -255,9 +267,10 @@ public class RKnight extends Sprite {
   private State getState() {
     // first check if player has hp
     if (hp <= 0) {
-      RKnightIsDead = true;
+      setToDestroy = true;
       return State.DEAD;
-    } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
+    }
+    else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
       return State.JUMPING;
     }
     // logic for performing full set of attack frames

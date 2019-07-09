@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.latif.rhythmknight.Screens.PlayScreen;
+import com.latif.rhythmknight.Screens.TitleScreen;
 
 public class RhythmKnight extends Game {
 
@@ -49,13 +50,17 @@ public class RhythmKnight extends Game {
 		manager.load("audio/sounds/goblingdie.wav", Sound.class);
 		manager.load("audio/sounds/goblinghit.wav", Sound.class);
 		manager.load("audio/sounds/rkdeath.wav", Sound.class);
+		manager.load("audio/sounds/gamerestart.wav", Sound.class);
+		manager.load("audio/music/gamewin.ogg", Music.class);
+		manager.load("audio/music/gameover.ogg", Music.class);
+
 
 
 		// finish loading assets
 		manager.finishLoading();
 
 		// pass in this so that the PlayScreen can set screens
-		setScreen(new PlayScreen(this));
+		setScreen(new TitleScreen(this));
 	}
 
 	// used to update and render the game elements called 60 times per second

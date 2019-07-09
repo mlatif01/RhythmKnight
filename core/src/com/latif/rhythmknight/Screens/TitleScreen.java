@@ -3,8 +3,6 @@ package com.latif.rhythmknight.Screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -15,15 +13,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
-import com.latif.rhythmknight.Sprites.Gobling;
 
-public class GameOver implements Screen {
+public class TitleScreen implements Screen {
+
   private Viewport viewport;
   private Stage stage;
 
   private Game game;
 
-  public GameOver(Game game) {
+  public TitleScreen(Game game) {
     this.game = game;
     viewport = new FitViewport(RhythmKnight.V_WIDTH, RhythmKnight.V_HEIGHT,
             new OrthographicCamera());
@@ -35,29 +33,17 @@ public class GameOver implements Screen {
     table.center();
     table.setFillParent(true);
 
-    Label gameOverLabel = new Label("GAME OVER", font);
-    Label playAgainLabel = new Label("Click to Play Again", font);
-    Label StageOverLabel = new Label("STAGE OVER", font);
-    Label WinLabel = new Label("Stage Completed! - Click for Next Stage", font);
-
+    Label rhythmKnightLabel = new Label("RHYTHM KNIGHT", font);
+    Label pressStart = new Label("PRESS START", font);
     stage.addActor(table);
 
-    // win
-    if (Gobling.death == 20) {
-      table.add(StageOverLabel).expandX();
-      table.row();
-      table.add(WinLabel).expandX().padTop(10f);
-      RhythmKnight.manager.get("audio/music/gamewin.ogg", Music.class).play();
-    }
-    // lose
-    else {
-      table.add(gameOverLabel).expandX();
-      table.row();
-      table.add(playAgainLabel).expandX().padTop(10f);
-      RhythmKnight.manager.get("audio/music/gameover.ogg", Music.class).play();
-    }
-  }
+    table.add(rhythmKnightLabel).expandX();
+    table.row();
+    table.add(pressStart).expandX().padTop(10f);
 
+
+
+  }
 
   @Override
   public void show() {
@@ -66,8 +52,7 @@ public class GameOver implements Screen {
 
   @Override
   public void render(float delta) {
-
-    // restart game when screen is touched
+    // Start game when screen is touched
     if (Gdx.input.isTouched()) {
       game.setScreen(new PlayScreen((RhythmKnight) game));
       dispose();
@@ -99,11 +84,6 @@ public class GameOver implements Screen {
 
   @Override
   public void dispose() {
-    Gobling.death = 0;
-    RhythmKnight.manager.get("audio/music/gamewin.ogg", Music.class).stop();
-    RhythmKnight.manager.get("audio/music/gameover.ogg", Music.class).stop();
-    RhythmKnight.manager.get("audio/sounds/gamerestart.wav", Sound.class).play();
     stage.dispose();
   }
-
 }

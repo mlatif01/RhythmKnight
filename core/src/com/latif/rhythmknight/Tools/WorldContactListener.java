@@ -33,7 +33,6 @@ public class WorldContactListener implements ContactListener {
         // if TileObject in range of sword and player is attacking call respective methods
         ((InteractiveTileObject) object.getUserData()).inSwordRange();
         if (swordOnObject) {
-          System.out.println("SWORD IS ON STONE FROM A: " + isSwordOnObject());
           ((InteractiveTileObject) object.getUserData()).checkSwordHit();
         }
       }
@@ -44,7 +43,6 @@ public class WorldContactListener implements ContactListener {
         // if TileObject in range of sword and player is attacking call respective methods
 //        ((Enemy) object.getUserData()).hitOnHead();
         if (swordOnObject) {
-          System.out.println("SWORD IS ON GOBLING FROM A: " + isSwordOnObject());
           ((Enemy) object.getUserData()).hitOnHead();
         }
       }
@@ -56,7 +54,6 @@ public class WorldContactListener implements ContactListener {
           // if TileObject in range of sword and player is attacking call respective methods
           ((InteractiveTileObject) object.getUserData()).inSwordRange();
           if (swordOnObject) {
-            System.out.println("SWORD IS ON STONE FROM B: " + isSwordOnObject());
             ((InteractiveTileObject) object.getUserData()).checkSwordHit();
           }
         }
@@ -76,11 +73,9 @@ public class WorldContactListener implements ContactListener {
 
     if (fixA.getUserData() != null && fixA.getUserData().equals("sword") && object.getUserData() instanceof InteractiveTileObject) {
       swordOnObject = false;
-      System.out.println("SWORD NOT IN RANGE OF STONE: " + isSwordOnObject());
     }
     if (fixB.getUserData() != null && fixB.getUserData().equals("sword") && object.getUserData() instanceof InteractiveTileObject) {
       swordOnObject = false;
-      System.out.println("SWORD NOT IN RANGE OF STONE");
     }
   }
 

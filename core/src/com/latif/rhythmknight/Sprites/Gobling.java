@@ -60,6 +60,7 @@ public class Gobling extends Enemy {
 
 
   public void update(float deltaTime) {
+    System.out.println(death);
     stateTime += deltaTime;
     if (setToDestroy && !destroyed) {
       world.destroyBody(b2body);
@@ -81,7 +82,7 @@ public class Gobling extends Enemy {
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 613, 1, 25, 25));
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 647, 1, 25, 25));
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 681, 1, 25, 25));
-    goblingMove = new Animation<TextureRegion>(0.5f, frames);
+    goblingMove = new Animation<TextureRegion>(0.4f, frames);
     frames.clear();
 
     // set up die frames
@@ -89,7 +90,7 @@ public class Gobling extends Enemy {
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 205, 1, 25, 25));
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 239, 1, 25, 25));
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 273, 1, 25, 25));
-    goblingDie = new Animation<TextureRegion>(0.5f, frames);
+    goblingDie = new Animation<TextureRegion>(0.4f, frames);
     frames.clear();
 
   }
@@ -132,16 +133,14 @@ public class Gobling extends Enemy {
   }
 
   public void draw(Batch batch){
-    if(!destroyed || stateTime < 1)
+    if(!destroyed || stateTime < 0.5)
       super.draw(batch);
   }
 
   @Override
   public void hitOnHead() {
     if (RKnight.isAttacking) {
-
       setToDestroy = true;
-      System.out.println("HITTING HEAD");
       Hud.updateScore(100);
       RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(0.5f);
     }
