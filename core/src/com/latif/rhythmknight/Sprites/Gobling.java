@@ -146,7 +146,7 @@ public class Gobling extends Enemy {
       setToDestroy = true;
       Hud.updateScore(100);
       screen.incrementEnemiesKilled();
-      System.out.println("DEATH: " + born);
+//      System.out.println("DEATH: " + born);
       RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(1f);
     }
   }

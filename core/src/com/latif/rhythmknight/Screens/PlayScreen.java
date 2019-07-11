@@ -152,7 +152,7 @@ public class PlayScreen implements Screen {
     // enemy spawn, kill, toKill variables
     enemiesSpawned = 0;
     enemiesKilled = 0;
-    enemiesToKill = 2;
+    enemiesToKill = 30;
 
     // set up music for the current Screen
 //    music = RhythmKnight.manager.get("audio/music/background2.ogg", Music.class);
@@ -290,9 +290,8 @@ public class PlayScreen implements Screen {
 
 //     spawn enemies if beat detected
     if (beatDetector.beat.isSnare()) {
-      System.out.println();
       timer = 0;
-      Gdx.app.log("BEAT DETECT", "SNARE BEAT: " + (++beatCount));
+//      Gdx.app.log("BEAT DETECT", "SNARE BEAT: " + (++beatCount));
       if (map.getLayers().get(6).getObjects().iterator().hasNext() && cameraPositioned && enemiesSpawned < enemiesToKill) {
 //        Gdx.app.log("Gobling", "Spawned at time: " + gameTime);
 //        Gdx.app.log("Gobling", "Should spawn at time: " + (gameTime - deltaSpawnToPlayer));

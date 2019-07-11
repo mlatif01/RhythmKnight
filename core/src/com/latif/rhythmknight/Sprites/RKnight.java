@@ -1,5 +1,6 @@
 package com.latif.rhythmknight.Sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -18,6 +19,8 @@ import com.latif.rhythmknight.Screens.PlayScreen;
 
 
 public class RKnight extends Sprite {
+
+  private float attackDelta = 0f;
 
   // boolean representing whether rk is dead
   private static boolean RKnightIsDead = false;
@@ -82,7 +85,7 @@ public class RKnight extends Sprite {
   // counter to help execute full slash animation
   private float attackCounter = 0.0f;
   // float used as offset for end of slash animation
-  private float attackAniOffset = 1.5f;
+  private float attackAniOffset = 2f;
 
   private TextureAtlas atlas_3;
 
@@ -158,6 +161,8 @@ public class RKnight extends Sprite {
   // update state of RKnight sprite
   public void update(float deltaTime) {
 
+    attackDelta += deltaTime;
+
     if (setToDestroy && !bodyDestroyed) {
       world.destroyBody(b2body);
       bodyDestroyed = true;
@@ -177,7 +182,6 @@ public class RKnight extends Sprite {
   // handle slash input from user defined in PlayScreen class by setting is attacking to true
   public void handleSlash() {
     if (currentState != State.JUMPING) {
-      System.out.println(stateTimer);
       isAttacking = true;
       canMove = false;
       b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
@@ -268,6 +272,7 @@ public class RKnight extends Sprite {
   }
 
   private State getState() {
+
     // first check if player has hp
     if (hp <= 0) {
       setToDestroy = true;
@@ -284,16 +289,35 @@ public class RKnight extends Sprite {
         canMove = true;
         // when animation is complete, change to next attack state
       }
-      // flip attack state
+
+      // flip attack state to the next slash animation
       if (!isAttacking) {
         if (nextAttackState == AttackState.ATTACK1) {
-          nextAttackState = AttackState.ATTACK2;
+          if (attackDelta < 1.5f) {
+//            System.out.println("ATTACK DELTA: " + attackDelta);
+            nextAttackState = AttackState.ATTACK2;
+          }
+          else if (attackDelta > 1.5f) {
+//            System.out.println("ATTACK DELTA: " + attackDelta);
+            nextAttackState = AttackState.ATTACK1;
+          }
         } else if (nextAttackState == AttackState.ATTACK2) {
-          nextAttackState = AttackState.ATTACK3;
-        } else {
+          if (attackDelta < 1.5f) {
+//            System.out.println("ATTACK DELTA: " + attackDelta);
+            nextAttackState = AttackState.ATTACK3;
+          }
+          else if (attackDelta > 1.5f) {
+//            System.out.println("ATTACK DELTA: " + attackDelta);
+            nextAttackState = AttackState.ATTACK1;
+          }
+        } else if (nextAttackState == AttackState.ATTACK3){
+//          System.out.println("ATTACK DELTA: " + attackDelta);
           nextAttackState = AttackState.ATTACK1;
         }
+        attackDelta = 0;
       }
+
+      // return relevant attack state
       if (nextAttackState == AttackState.ATTACK1) {
         return State.ATTACKING_1;
       } else if (nextAttackState == AttackState.ATTACK2) {
@@ -311,9 +335,11 @@ public class RKnight extends Sprite {
 //    else if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
 //      return State.DRAWING_SWORD;
 //    }
+
     else {
       return State.IDLE_UNSHEATHED;
     }
+
   }
 
   public void defineAnimations() {
@@ -370,7 +396,7 @@ public class RKnight extends Sprite {
     frames.add(new TextureRegion(getTexture(), 53 + xpad, 61, 37, 37));
     frames.add(new TextureRegion(getTexture(), 53 + xpad, 22, 37, 37));
     frames.add(new TextureRegion(getTexture(), 105 + xpad, 61, 37, 37));
-    rKnightAttack = new Animation(0.1f, frames);
+    rKnightAttack = new Animation(0.12f, frames);
     frames.clear();
 
     // set up attack2 animation frames
@@ -393,7 +419,7 @@ public class RKnight extends Sprite {
     frames.add(new TextureRegion(getTexture(), 365 + xpad, 79, 44, 37));
     frames.add(new TextureRegion(getTexture(), 365, 40, 37, 37));
     frames.add(new TextureRegion(getTexture(), 417, 79, 37, 37));
-    rKnightAttack3 = new Animation(0.105f, frames);
+    rKnightAttack3 = new Animation(0.15f, frames);
     frames.clear();
 
     //set up death animation

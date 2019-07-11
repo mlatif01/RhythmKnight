@@ -75,7 +75,7 @@ public class B2WorldCreator {
   }
 
   public void spawnGobling() {
-    goblings.add(new Gobling(screen, goblingRects.get(0).getX() / RhythmKnight.PPM, goblingRects.get(0).getY() / RhythmKnight.PPM));
+//    goblings.add(new Gobling(screen, goblingRects.get(0).getX() / RhythmKnight.PPM, goblingRects.get(0).getY() / RhythmKnight.PPM));
   }
 
   public Array<Gobling> getGoblings() {
