@@ -53,7 +53,6 @@ public class RhythmKnight extends Game {
     manager.load("audio/music/gamewin.ogg", Music.class);
     manager.load("audio/music/gameover.ogg", Music.class);
 
-
     // finish loading assets
     manager.finishLoading();
 

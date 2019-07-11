@@ -30,6 +30,8 @@ public class PlayScreen implements Screen {
 
   // reference to the game, used to set screens
   private RhythmKnight game;
+
+  // reference to the texture atlas
   private TextureAtlas atlas;
   private TextureAtlas atlas_2;
   private TextureAtlas atlas_3;
@@ -48,8 +50,8 @@ public class PlayScreen implements Screen {
 
   // number of enemies spawned in the game
   private int enemiesSpawned;
-
   private int enemiesKilled;
+  private int enemiesToKill;
 
   // Cutscene variables
   // boolean representing if cutscene has been executed
@@ -79,9 +81,10 @@ public class PlayScreen implements Screen {
 
   // state timer for play screen
   private float timer;
-  private int count = 0;
+  private int beatCount = 0;
   private float deltaFromSpawnedToPlayer;
   private float deltaSpawnToPlayer;
+  private float gameEndTimer;
 
   // Cutscene controller which initiates cutscenes
 //  private CutSceneController cutSceneController;
@@ -136,6 +139,9 @@ public class PlayScreen implements Screen {
     // timer since last beat
     timer = 0f;
 
+    // call this timer when gameEnds
+    gameEndTimer = 0f;
+
     // delta between spawned and player
     deltaFromSpawnedToPlayer = 0f;
 
@@ -143,10 +149,10 @@ public class PlayScreen implements Screen {
     deltaSpawnToPlayer = 3.349f;
 
 
-    // how many enemies have been spawned
+    // enemy spawn, kill, toKill variables
     enemiesSpawned = 0;
-
     enemiesKilled = 0;
+    enemiesToKill = 2;
 
     // set up music for the current Screen
 //    music = RhythmKnight.manager.get("audio/music/background2.ogg", Music.class);
@@ -161,7 +167,7 @@ public class PlayScreen implements Screen {
       beatDetector.player.pause();
 //      music.stop();
       return true;
-    } else if (enemiesKilled == 10 && enemiesSpawned == enemiesKilled && player.getStateTimer() > 3) {
+    } else if (enemiesKilled >= enemiesToKill && enemiesSpawned >= enemiesKilled && player.getStateTimer() > 4 && gameEndTimer > 3.0f) {
       beatDetector.player.pause();
 //      music.stop();
       return true;
@@ -189,7 +195,7 @@ public class PlayScreen implements Screen {
 
   }
 
-  public void animateCutsceneFrames(float deltaTime) {
+  public void animateStartCutsceneFrames(float deltaTime) {
     // Move screen to correct position at start of game
     // **Improve the implementation of this**
     if (gameCam.position.x < cameraStop) {
@@ -207,13 +213,6 @@ public class PlayScreen implements Screen {
 
   // Handle any key inputs or events
   public void handleInput(float deltaTime) {
-
-    // play cutscene at beginning of game
-    if (!cameraPositioned) {
-      animateCutsceneFrames(deltaTime);
-    } else if (cameraPositioned) {
-      player.readyToBattle = true;
-    }
 
     // Handling input for RK actions
     if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
@@ -233,12 +232,37 @@ public class PlayScreen implements Screen {
 
   }
 
-  private boolean spawned = false;
-
   public void update(float deltaTime) {
 
-    System.out.println("ENEMIES KILLED: " + enemiesKilled);
-    System.out.println("ENEMIES SPAWNED: " + enemiesSpawned);
+    // play cutscene at beginning of game
+    if (!cameraPositioned) {
+      animateStartCutsceneFrames(deltaTime);
+    } else if (cameraPositioned) {
+      player.readyToBattle = true;
+    }
+
+    // focus camera on player
+    if (cameraPositioned && gameCam.zoom > 0.7) {
+      gameCam.zoom -= 0.003;
+      gameCam.position.y -= 0.003;
+      gameCam.position.x -= 0.005;
+    }
+
+    // focus camera away from player and perform end cutscene
+    if (enemiesKilled == enemiesToKill) {
+//      player.readyToBattle = false;
+      gameEndTimer += deltaTime;
+      if (gameEndTimer > 1f) {
+        player.b2body.applyLinearImpulse(new Vector2(0.05f, 0f), player.b2body.getWorldCenter(), true);
+        gameCam.zoom += 0.0025f;
+        gameCam.position.y += 0.003f;
+        gameCam.position.x += 0.005f;
+      }
+
+    }
+
+//    System.out.println("ENEMIES KILLED: " + enemiesKilled);
+//    System.out.println("ENEMIES SPAWNED: " + enemiesSpawned);
     gameTime += deltaTime;
 //    System.out.println(gameTime);
 
@@ -268,8 +292,8 @@ public class PlayScreen implements Screen {
     if (beatDetector.beat.isSnare()) {
       System.out.println();
       timer = 0;
-      Gdx.app.log("BEAT DETECT", "SNARE BEAT: " + (++count));
-      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cameraPositioned && enemiesSpawned < 10) {
+      Gdx.app.log("BEAT DETECT", "SNARE BEAT: " + (++beatCount));
+      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cameraPositioned && enemiesSpawned < enemiesToKill) {
 //        Gdx.app.log("Gobling", "Spawned at time: " + gameTime);
 //        Gdx.app.log("Gobling", "Should spawn at time: " + (gameTime - deltaSpawnToPlayer));
         creator.spawnGobling();
@@ -321,7 +345,7 @@ public class PlayScreen implements Screen {
     mapRenderer.render();
 
     // render our Box2dDebugLines
-    b2dr.render(world, gameCam.combined);
+//    b2dr.render(world, gameCam.combined);
 
     // set only what the game can see
     game.batch.setProjectionMatrix(gameCam.combined);

@@ -177,6 +177,7 @@ public class RKnight extends Sprite {
   // handle slash input from user defined in PlayScreen class by setting is attacking to true
   public void handleSlash() {
     if (currentState != State.JUMPING) {
+      System.out.println(stateTimer);
       isAttacking = true;
       canMove = false;
       b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);

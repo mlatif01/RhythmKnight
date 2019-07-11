@@ -73,6 +73,9 @@ public class Gobling extends Enemy {
       setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
       setRegion(goblingMove.getKeyFrame(stateTime, true));
     }
+    else if (destroyed) {
+      setRegion(goblingDie.getKeyFrame(stateTime, false));
+    }
   }
 
   protected void defineAnimations() {
@@ -90,7 +93,7 @@ public class Gobling extends Enemy {
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 205, 1, 25, 25));
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 239, 1, 25, 25));
     frames.add(new TextureRegion(screen.getAtlas_2().getTextures().first(), 273, 1, 25, 25));
-    goblingDie = new Animation<TextureRegion>(0.4f, frames);
+    goblingDie = new Animation<TextureRegion>(0.1f, frames);
     frames.clear();
 
   }
@@ -144,7 +147,7 @@ public class Gobling extends Enemy {
       Hud.updateScore(100);
       screen.incrementEnemiesKilled();
       System.out.println("DEATH: " + born);
-      RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(0.5f);
+      RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(1f);
     }
   }
 
@@ -153,7 +156,7 @@ public class Gobling extends Enemy {
     RKnight.reduceHp();
     setToDestroy = true;
     screen.incrementEnemiesKilled();
-    RhythmKnight.manager.get("audio/sounds/goblinghit.wav", Sound.class).play(0.8f);
+    RhythmKnight.manager.get("audio/sounds/goblinghit.wav", Sound.class).play(1f);
   }
 
 }
