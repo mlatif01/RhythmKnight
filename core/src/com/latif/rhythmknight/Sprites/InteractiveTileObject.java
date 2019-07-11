@@ -1,6 +1,5 @@
 package com.latif.rhythmknight.Sprites;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -16,8 +15,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Screens.PlayScreen;
-
-import java.awt.RenderingHints;
 
 public abstract class InteractiveTileObject {
   protected World world;
@@ -50,12 +47,13 @@ public abstract class InteractiveTileObject {
   }
 
   public abstract void inSwordRange();
+
   public abstract void checkSwordHit();
 
   public TiledMapTileLayer.Cell getCell() {
     // box2d body is scaled down its 1/16th so we have to scale it back up (* by PPM) to get to 16
     TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get(8);
-    return layer.getCell((int)(body.getPosition().x * RhythmKnight.PPM / 16),
+    return layer.getCell((int) (body.getPosition().x * RhythmKnight.PPM / 16),
             (int) (body.getPosition().y * RhythmKnight.PPM / 16));
   }
 

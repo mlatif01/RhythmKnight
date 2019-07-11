@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
+import com.latif.rhythmknight.Tools.BeatDetector;
 
 public class TitleScreen implements Screen {
 
@@ -41,8 +42,6 @@ public class TitleScreen implements Screen {
     table.row();
     table.add(pressStart).expandX().padTop(10f);
 
-
-
   }
 
   @Override
@@ -52,6 +51,7 @@ public class TitleScreen implements Screen {
 
   @Override
   public void render(float delta) {
+
     // Start game when screen is touched
     if (Gdx.input.isTouched()) {
       game.setScreen(new PlayScreen((RhythmKnight) game));

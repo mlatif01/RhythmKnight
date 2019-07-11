@@ -53,3 +53,7 @@ task afterEclipseImport(description: "Post processing after project generation",
     printer.print(classpath)
   }
 }
+
+dependencies {
+    implementation 'net.compartmental.code:minim:2.2.2'
+}

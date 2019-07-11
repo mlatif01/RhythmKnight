@@ -89,6 +89,11 @@ task run(type: Exec) {
     commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.latif.rhythmknight/com.latif.rhythmknight.AndroidLauncher'
 }
 
+dependencies {
+    implementation 'net.compartmental.code:minim:2.2.2'
+    implementation files('C:/Users/milad/Desktop/RhythmKnight/core/build/libs/lwbd.jar')
+}
+
 // sets up the Android Eclipse project, using the old Ant based build.
 eclipse {
     // need to specify Java source sets explicitly, SpringSource Gradle Eclipse plugin

@@ -1,10 +1,10 @@
 package com.latif.rhythmknight.Screens;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -19,18 +19,23 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Sprites.Enemy;
-import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
+import com.latif.rhythmknight.Tools.BeatDetector;
 import com.latif.rhythmknight.Tools.WorldContactListener;
 
 public class PlayScreen implements Screen {
+
+  private float gameTime = 0f;
 
   // reference to the game, used to set screens
   private RhythmKnight game;
   private TextureAtlas atlas;
   private TextureAtlas atlas_2;
   private TextureAtlas atlas_3;
+
+  private BeatDetector beatDetector;
+
 
   // reference to the Hud
   private Hud hud;
@@ -40,6 +45,11 @@ public class PlayScreen implements Screen {
 
   // music
   private Music music;
+
+  // number of enemies spawned in the game
+  private int enemiesSpawned;
+
+  private int enemiesKilled;
 
   // Cutscene variables
   // boolean representing if cutscene has been executed
@@ -67,11 +77,19 @@ public class PlayScreen implements Screen {
   // Manages a Camera and determines how world coordinates are mapped to and from the screen
   private Viewport gamePort;
 
+  // state timer for play screen
+  private float timer;
+  private int count = 0;
+  private float deltaFromSpawnedToPlayer;
+  private float deltaSpawnToPlayer;
+
   // Cutscene controller which initiates cutscenes
 //  private CutSceneController cutSceneController;
 
   // Constructor for initialising the playscreen - as we need to send the game to the screen
   public PlayScreen(RhythmKnight game) {
+    Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
     // create TextureAtlas based on spritesheets
     atlas = new TextureAtlas("RKGraphics.pack");
     atlas_2 = new TextureAtlas("slime_graphics.pack");
@@ -97,10 +115,11 @@ public class PlayScreen implements Screen {
     // set up Box2d World, with gravity
     world = new World(new Vector2(0, -10), true);
 
-    b2dr = new Box2DDebugRenderer();
-
     // create B2WorldCreator
     creator = new B2WorldCreator(this);
+
+    b2dr = new Box2DDebugRenderer();
+
 
     // create entity objects in our game world for the active PlayScreen
     player = new RKnight(this);
@@ -111,24 +130,42 @@ public class PlayScreen implements Screen {
     // identifying collision objects
     world.setContactListener(new WorldContactListener());
 
+    // instantiation of BeatDetector class
+    beatDetector = new BeatDetector();
+
+    // timer since last beat
+    timer = 0f;
+
+    // delta between spawned and player
+    deltaFromSpawnedToPlayer = 0f;
+
+    // we use this to create enemy 3.35f before beat is detected to synchronise with slash
+    deltaSpawnToPlayer = 3.349f;
+
+
+    // how many enemies have been spawned
+    enemiesSpawned = 0;
+
+    enemiesKilled = 0;
+
     // set up music for the current Screen
-    music = RhythmKnight.manager.get("audio/music/background2.ogg", Music.class);
-    music.setLooping(true);
-    music.setVolume(0.5f);
-    music.play();
+//    music = RhythmKnight.manager.get("audio/music/background2.ogg", Music.class);
+//    music.setLooping(true);
+//    music.setVolume(0.5f);
+//    music.play();
   }
 
   public boolean gameOver() {
-    if ( (player.currentState == RKnight.State.DEAD && player.getStateTimer() > 3)) {
+    if ((player.currentState == RKnight.State.DEAD && player.getStateTimer() > 3)) {
       // stop music when player dies
-      music.stop();
+      beatDetector.player.pause();
+//      music.stop();
       return true;
-    }
-    else if (Gobling.death == 20 && player.getStateTimer() > 3) {
-      music.stop();
+    } else if (enemiesKilled == 10 && enemiesSpawned == enemiesKilled && player.getStateTimer() > 3) {
+      beatDetector.player.pause();
+//      music.stop();
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -196,9 +233,49 @@ public class PlayScreen implements Screen {
 
   }
 
+  private boolean spawned = false;
 
   public void update(float deltaTime) {
 
+    System.out.println("ENEMIES KILLED: " + enemiesKilled);
+    System.out.println("ENEMIES SPAWNED: " + enemiesSpawned);
+    gameTime += deltaTime;
+//    System.out.println(gameTime);
+
+    timer += deltaTime;
+
+    // use to find out how long it takes from spawned to being hit by player
+//    if (spawned) {
+//      deltaFromSpawnedToPlayer += deltaTime;
+//    }
+
+    // beat detector logic
+    beatDetector.beat.detect(beatDetector.player.mix);
+//    if(beatDetector.beat.isHat()) {
+//      System.out.println("HAT");
+//    }
+//
+//    if(beatDetector.beat.isSnare()) {
+//      System.out.println("SNARE");
+//    }
+//
+//    if (beatDetector.beat.isKick()) {
+//      System.out.println("KICK");
+//    }
+
+
+//     spawn enemies if beat detected
+    if (beatDetector.beat.isSnare()) {
+      System.out.println();
+      timer = 0;
+      Gdx.app.log("BEAT DETECT", "SNARE BEAT: " + (++count));
+      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cameraPositioned && enemiesSpawned < 10) {
+//        Gdx.app.log("Gobling", "Spawned at time: " + gameTime);
+//        Gdx.app.log("Gobling", "Should spawn at time: " + (gameTime - deltaSpawnToPlayer));
+        creator.spawnGobling();
+        enemiesSpawned += 1;
+      }
+    }
 
     // handles any key inputs or events
     handleInput(deltaTime);
@@ -244,7 +321,7 @@ public class PlayScreen implements Screen {
     mapRenderer.render();
 
     // render our Box2dDebugLines
-//    b2dr.render(world, gameCam.combined);
+    b2dr.render(world, gameCam.combined);
 
     // set only what the game can see
     game.batch.setProjectionMatrix(gameCam.combined);
@@ -256,6 +333,7 @@ public class PlayScreen implements Screen {
     for (Enemy enemy : creator.getGoblings()) {
       enemy.draw(game.batch);
     }
+
 
     // end batch drawing
     game.batch.end();
@@ -280,6 +358,10 @@ public class PlayScreen implements Screen {
   public void resize(int width, int height) {
     // important that the viewport is adjusted so that it knows what the actual screen size is
     gamePort.update(width, height);
+  }
+
+  public B2WorldCreator getCreator() {
+    return creator;
   }
 
   public TiledMap getMap() {
@@ -312,5 +394,18 @@ public class PlayScreen implements Screen {
     world.dispose();
     b2dr.dispose();
     hud.dispose();
+  }
+
+
+  public float getSpawnTimer() {
+    return deltaFromSpawnedToPlayer;
+  }
+
+  public void resetSpawnTimer() {
+    deltaFromSpawnedToPlayer = 0;
+  }
+
+  public void incrementEnemiesKilled() {
+    enemiesKilled += 1;
   }
 }

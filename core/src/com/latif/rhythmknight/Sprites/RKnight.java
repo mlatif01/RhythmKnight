@@ -27,7 +27,9 @@ public class RKnight extends Sprite {
     IDLE_SHEATHED, IDLE_UNSHEATHED, DRAWING_SWORD, RUNNING, JUMPING, FALLING, ATTACKING_1, ATTACKING_2, ATTACKING_3, DEAD
   }
 
-  public enum AttackState {ATTACK1, ATTACK2, ATTACK3};
+  public enum AttackState {ATTACK1, ATTACK2, ATTACK3}
+
+  ;
 
   public State currentState;
   public State previousState;
@@ -269,8 +271,7 @@ public class RKnight extends Sprite {
     if (hp <= 0) {
       setToDestroy = true;
       return State.DEAD;
-    }
-    else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
+    } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
       return State.JUMPING;
     }
     // logic for performing full set of attack frames
@@ -288,8 +289,7 @@ public class RKnight extends Sprite {
           nextAttackState = AttackState.ATTACK2;
         } else if (nextAttackState == AttackState.ATTACK2) {
           nextAttackState = AttackState.ATTACK3;
-        }
-        else {
+        } else {
           nextAttackState = AttackState.ATTACK1;
         }
       }
@@ -297,8 +297,7 @@ public class RKnight extends Sprite {
         return State.ATTACKING_1;
       } else if (nextAttackState == AttackState.ATTACK2) {
         return State.ATTACKING_2;
-      }
-      else {
+      } else {
         return State.ATTACKING_3;
       }
 

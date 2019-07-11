@@ -1,6 +1,5 @@
 package com.latif.rhythmknight.Sprites;
 
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -18,6 +17,7 @@ import com.latif.rhythmknight.Screens.PlayScreen;
 public class Gobling extends Enemy {
 
   private float stateTime;
+  public float born = 0f;
   private Array<TextureRegion> frames;
 
   private boolean setToDestroy;
@@ -60,7 +60,7 @@ public class Gobling extends Enemy {
 
 
   public void update(float deltaTime) {
-    System.out.println(death);
+    born += deltaTime;
     stateTime += deltaTime;
     if (setToDestroy && !destroyed) {
       world.destroyBody(b2body);
@@ -107,7 +107,7 @@ public class Gobling extends Enemy {
     // define fixture of sprite
     FixtureDef fdef = new FixtureDef();
     CircleShape shape = new CircleShape();
-    shape.setRadius(12/ RhythmKnight.PPM);
+    shape.setRadius(12 / RhythmKnight.PPM);
     fdef.filter.categoryBits = RhythmKnight.GOBLING_BIT;
     // set what gobling can collide with
     fdef.filter.maskBits = RhythmKnight.GROUND_BIT | RhythmKnight.STONE_BIT |
@@ -132,8 +132,8 @@ public class Gobling extends Enemy {
 
   }
 
-  public void draw(Batch batch){
-    if(!destroyed || stateTime < 0.5)
+  public void draw(Batch batch) {
+    if (!destroyed || stateTime < 0.5)
       super.draw(batch);
   }
 
@@ -142,6 +142,8 @@ public class Gobling extends Enemy {
     if (RKnight.isAttacking) {
       setToDestroy = true;
       Hud.updateScore(100);
+      screen.incrementEnemiesKilled();
+      System.out.println("DEATH: " + born);
       RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(0.5f);
     }
   }
@@ -150,6 +152,7 @@ public class Gobling extends Enemy {
   public void touchingRKnight() {
     RKnight.reduceHp();
     setToDestroy = true;
+    screen.incrementEnemiesKilled();
     RhythmKnight.manager.get("audio/sounds/goblinghit.wav", Sound.class).play(0.8f);
   }
 

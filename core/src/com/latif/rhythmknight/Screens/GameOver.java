@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Sprites.Gobling;
+import com.latif.rhythmknight.Sprites.RKnight;
 
 public class GameOver implements Screen {
   private Viewport viewport;
@@ -43,7 +44,7 @@ public class GameOver implements Screen {
     stage.addActor(table);
 
     // win
-    if (Gobling.death == 20) {
+    if (RKnight.getHp() != 0) {
       table.add(StageOverLabel).expandX();
       table.row();
       table.add(WinLabel).expandX().padTop(10f);
@@ -100,6 +101,7 @@ public class GameOver implements Screen {
   @Override
   public void dispose() {
     Gobling.death = 0;
+    RKnight.readyToBattle = false;
     RhythmKnight.manager.get("audio/music/gamewin.ogg", Music.class).stop();
     RhythmKnight.manager.get("audio/music/gameover.ogg", Music.class).stop();
     RhythmKnight.manager.get("audio/sounds/gamerestart.wav", Sound.class).play();
