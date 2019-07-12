@@ -12,6 +12,8 @@ import java.io.InputStream;
 import ddf.minim.*;
 import ddf.minim.analysis.BeatDetect;
 
+import be.tarsos.dsp.*;
+
 public class BeatDetector {
 
   Minim minim;
@@ -43,6 +45,7 @@ public class BeatDetector {
   }
 
   private void setup() {
+
     minim = new Minim(this);
     player = minim.loadFile("audio/song1.mp3", 1024);
     player.play();

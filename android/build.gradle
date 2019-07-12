@@ -91,7 +91,9 @@ task run(type: Exec) {
 
 dependencies {
     implementation 'net.compartmental.code:minim:2.2.2'
-    implementation files('C:/Users/milad/Desktop/RhythmKnight/core/build/libs/lwbd.jar')
+    implementation project(path: ':TarsosDSP-latest')
+    implementation project(path: ':lwbd')
+    implementation project(path: ':lwbd')
 }
 
 // sets up the Android Eclipse project, using the old Ant based build.

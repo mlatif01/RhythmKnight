@@ -13,3 +13,9 @@ The Essential Retro Video Game Sound Effects Collection [512 sounds] By Juhani J
 
 Copyright/Attribution Notice for gamewin theme etc:
 Attribution to t4ngr4m or avgvsta.
+
+
+Beat Detection Libraries used:
+lwbd
+minim
+tarsosDsp

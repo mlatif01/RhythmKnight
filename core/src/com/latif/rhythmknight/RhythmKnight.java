@@ -35,6 +35,7 @@ public class RhythmKnight extends Game {
   // Used to initialise game and load resources
   @Override
   public void create() {
+
     // initialise batch
     batch = new SpriteBatch();
 
