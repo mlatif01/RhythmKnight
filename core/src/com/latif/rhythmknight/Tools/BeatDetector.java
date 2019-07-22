@@ -46,11 +46,10 @@ public class BeatDetector {
   private void setup() {
 
     minim = new Minim(this);
-    player = minim.loadFile("audio/song1.mp3", 1024);
+    player = minim.loadFile("audio/song0.wav", 1024);
     player.play();
     beat = new BeatDetect(1024, 44100.0f);
-    beat.setSensitivity(300);
-
+    beat.setSensitivity(200);
     eRadius = 20;
   }
 

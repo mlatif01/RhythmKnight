@@ -22,6 +22,7 @@ import com.latif.rhythmknight.Sprites.Enemy;
 import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
 import com.latif.rhythmknight.Tools.BeatDetector;
+import com.latif.rhythmknight.Tools.CutSceneController;
 import com.latif.rhythmknight.Tools.WorldContactListener;
 
 public class PlayScreen implements Screen {
@@ -40,8 +41,8 @@ public class PlayScreen implements Screen {
   private TextureAtlas atlas_2;
   private TextureAtlas atlas_3;
 
+  // reference to beat detector
   private BeatDetector beatDetector;
-
 
   // reference to the Hud
   private Hud hud;
@@ -57,17 +58,13 @@ public class PlayScreen implements Screen {
   private int enemiesKilled;
   private int enemiesToKill;
 
-  // Cutscene variables
-  // boolean representing if cutscene has been executed for stage 1
-  private boolean cameraPositioned = false;
-  private final float cameraStop = 5.0f;
-  private final float cameraSpeed = 0.3f;
 
   // Box2d variables
   private World world;
   // provides a graphical representation of fixtures and bodies within box2d world
   private Box2DDebugRenderer b2dr;
 
+  // creates the box2d world objects
   private B2WorldCreator creator;
 
   // loads the map into the game
@@ -83,6 +80,7 @@ public class PlayScreen implements Screen {
   // Manages a Camera and determines how world coordinates are mapped to and from the screen
   private Viewport gamePort;
 
+  // TODO
   // state timer for play screen
   private float timer;
   private int beatCount = 0;
@@ -91,7 +89,7 @@ public class PlayScreen implements Screen {
   private float gameEndTimer;
 
   // Cutscene controller which initiates cutscenes
-//  private CutSceneController cutSceneController;
+  private CutSceneController cutSceneController;
 
   // Constructor for initialising the playscreen - as we need to send the game to the screen
   public PlayScreen(RhythmKnight game) {
@@ -114,10 +112,9 @@ public class PlayScreen implements Screen {
     // create, load and render our game map
     mapLoader = new TmxMapLoader();
     if (isStage_1) {
-        map = mapLoader.load("level1.tmx");
-    }
-    else if (isStage_2) {
-        map = mapLoader.load("level2.tmx");
+      map = mapLoader.load("level1.tmx");
+    } else if (isStage_2) {
+      map = mapLoader.load("level2.tmx");
     }
     mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / RhythmKnight.PPM);
 
@@ -127,11 +124,11 @@ public class PlayScreen implements Screen {
     // set up Box2d World, with gravity
     world = new World(new Vector2(0, -10), true);
 
-    // create B2WorldCreator
+    // creates B2d world objects using PlayScreen
     creator = new B2WorldCreator(this);
 
+    // create debug renderer
     b2dr = new Box2DDebugRenderer();
-
 
     // create entity objects in our game world for the active PlayScreen
     player = new RKnight(this);
@@ -157,13 +154,15 @@ public class PlayScreen implements Screen {
     // we use this to create enemy 3.35f before beat is detected to synchronise with slash
     deltaSpawnToPlayer = 3.349f;
 
-
     // enemy spawn, kill, toKill variables
     enemiesSpawned = 0;
     enemiesKilled = 0;
     enemiesToKill = 30;
 
-    // set up music for the current Screen
+    // controls cut scene events
+    cutSceneController = new CutSceneController(this);
+
+    // set up music for the current Screen - Old (Without beat detection)
 //    music = RhythmKnight.manager.get("audio/music/background2.ogg", Music.class);
 //    music.setLooping(true);
 //    music.setVolume(0.5f);
@@ -204,22 +203,6 @@ public class PlayScreen implements Screen {
 
   }
 
-  public void animateStartCutsceneFrames(float deltaTime) {
-    // Move screen to correct position at start of game
-    // **Improve the implementation of this**
-    if (gameCam.position.x < cameraStop) {
-      gameCam.position.x += cameraSpeed * deltaTime;
-    }
-    // stop moving camera when in correct position
-    if (gameCam.position.x > cameraStop) {
-      cameraPositioned = true;
-    }
-    // move Player to correct position
-    if (gameCam.position.x - 1.5f > player.b2body.getPosition().x && gameCam.position.x < cameraStop) {
-      player.b2body.applyLinearImpulse(new Vector2(0.5f, 0f), player.b2body.getWorldCenter(), true);
-    }
-  }
-
   // Handle any key inputs or events
   public void handleInput(float deltaTime) {
 
@@ -244,14 +227,15 @@ public class PlayScreen implements Screen {
   public void update(float deltaTime) {
 
     // play cutscene at beginning of game
-    if (!cameraPositioned && isStage_1) {
-      animateStartCutsceneFrames(deltaTime);
-    } else if (cameraPositioned) {
-      player.readyToBattle = true;
+    if (!cutSceneController.isCameraPositioned() && isStage_1) {
+      cutSceneController.animateStartCutsceneFrames(deltaTime);
+    } else if (cutSceneController.isCameraPositioned()) {
+      player.setReadyToBattle(true);
     }
 
     // focus camera on player
-    if (cameraPositioned && gameCam.zoom > 0.7 && isStage_1) {
+    // TODO: isStage_1, Improve logic
+    if (cutSceneController.isCameraPositioned() && gameCam.zoom > 0.7 && isStage_1) {
       gameCam.zoom -= 0.003;
       gameCam.position.y -= 0.003;
       gameCam.position.x -= 0.005;
@@ -284,24 +268,28 @@ public class PlayScreen implements Screen {
 
     // beat detector logic
     beatDetector.beat.detect(beatDetector.player.mix);
+
+
 //    if(beatDetector.beat.isHat()) {
 //      System.out.println("HAT");
 //    }
-//
-//    if(beatDetector.beat.isSnare()) {
-//      System.out.println("SNARE");
-//    }
-//
+
+    if(beatDetector.beat.isSnare()) {
+      System.out.println("SNARE");
+    }
+
 //    if (beatDetector.beat.isKick()) {
 //      System.out.println("KICK");
 //    }
 
 
-//     spawn enemies if beat detected
+//     spawn enemies if beat detected - hat is detected
     if (beatDetector.beat.isSnare()) {
       timer = 0;
 //      Gdx.app.log("BEAT DETECT", "SNARE BEAT: " + (++beatCount));
-      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cameraPositioned && enemiesSpawned < enemiesToKill) {
+      // TODO: Improve this
+      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cutSceneController.isCameraPositioned()
+              && enemiesSpawned < enemiesToKill) {
 //        Gdx.app.log("Gobling", "Spawned at time: " + gameTime);
 //        Gdx.app.log("Gobling", "Should spawn at time: " + (gameTime - deltaSpawnToPlayer));
         creator.spawnGobling();
@@ -362,7 +350,6 @@ public class PlayScreen implements Screen {
     for (Enemy enemy : creator.getGoblings()) {
       enemy.draw(game.batch);
     }
-
 
     // end batch drawing
     game.batch.end();
@@ -426,6 +413,7 @@ public class PlayScreen implements Screen {
   }
 
 
+
   public float getSpawnTimer() {
     return deltaFromSpawnedToPlayer;
   }
@@ -437,4 +425,13 @@ public class PlayScreen implements Screen {
   public void incrementEnemiesKilled() {
     enemiesKilled += 1;
   }
+
+  public OrthographicCamera getGameCam() {
+    return gameCam;
+  }
+
+  public RKnight getPlayer() {
+    return player;
+  }
+
 }

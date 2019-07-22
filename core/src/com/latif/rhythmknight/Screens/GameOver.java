@@ -44,18 +44,19 @@ public class GameOver implements Screen {
     stage.addActor(table);
 
     // win
+    // TODO
     if (RKnight.getHp() != 0) {
       table.add(StageOverLabel).expandX();
       table.row();
       table.add(WinLabel).expandX().padTop(10f);
-      RhythmKnight.manager.get("audio/music/gamewin.ogg", Music.class).play();
+      RhythmKnight.manager.get("audio/music/gamewin2.wav", Music.class).play();
     }
     // lose
     else {
       table.add(gameOverLabel).expandX();
       table.row();
       table.add(playAgainLabel).expandX().padTop(10f);
-      RhythmKnight.manager.get("audio/music/gameover.ogg", Music.class).play();
+      RhythmKnight.manager.get("audio/music/gameover2.wav", Music.class).play();
     }
   }
 
@@ -103,7 +104,9 @@ public class GameOver implements Screen {
     Gobling.death = 0;
     RKnight.readyToBattle = false;
     RhythmKnight.manager.get("audio/music/gamewin.ogg", Music.class).stop();
+    RhythmKnight.manager.get("audio/music/gamewin2.wav", Music.class).stop();
     RhythmKnight.manager.get("audio/music/gameover.ogg", Music.class).stop();
+    RhythmKnight.manager.get("audio/music/gameover2.wav", Music.class).stop();
     RhythmKnight.manager.get("audio/sounds/gamerestart.wav", Sound.class).play();
     stage.dispose();
   }

@@ -25,14 +25,16 @@ public class RKnight extends Sprite {
   // boolean representing whether rk is dead
   private static boolean RKnightIsDead = false;
 
+  public void setReadyToBattle(boolean isReadyToBattle) {
+    readyToBattle = isReadyToBattle;
+  }
+
   // ENUM for RKnight states
   public enum State {
     IDLE_SHEATHED, IDLE_UNSHEATHED, DRAWING_SWORD, RUNNING, JUMPING, FALLING, ATTACKING_1, ATTACKING_2, ATTACKING_3, DEAD
   }
 
   public enum AttackState {ATTACK1, ATTACK2, ATTACK3}
-
-  ;
 
   public State currentState;
   public State previousState;

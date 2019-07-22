@@ -37,7 +37,7 @@
   <object id="27" x="96" y="84" width="64" height="46"/>
  </objectgroup>
  <objectgroup id="4" name="enemy">
-  <object id="209" x="503.667" y="172"/>
+  <object id="209" x="584.667" y="170"/>
  </objectgroup>
  <objectgroup id="24" name="stone">
   <object id="42" x="368.667" y="159.333" width="16" height="16"/>

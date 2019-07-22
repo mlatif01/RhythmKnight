@@ -74,7 +74,6 @@ public class Hud implements Disposable {
     table.add(rhythmKnightHpLabel).expandX();
     table.add(levelLabel).expandX();
 
-
     // adds the table to the stage
     stage.addActor(table);
   }
@@ -85,10 +84,12 @@ public class Hud implements Disposable {
   }
 
   public void update(float deltaTime) {
+    // TODO
     // if rk alive then set hp to current hp value
     if (RKnight.getHp() > 0) {
       rhythmKnightHpLabel.setText((String.format("%02d", RKnight.getHp())));
     }
+    // TODO
     // if rk dead set hp to 0
     else if (RKnight.getHp() <= 0) {
       rhythmKnightHpLabel.setText((String.format("%02d", 0)));
