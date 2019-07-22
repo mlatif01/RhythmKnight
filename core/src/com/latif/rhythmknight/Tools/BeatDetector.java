@@ -12,7 +12,6 @@ import java.io.InputStream;
 import ddf.minim.*;
 import ddf.minim.analysis.BeatDetect;
 
-import be.tarsos.dsp.*;
 
 public class BeatDetector {
 

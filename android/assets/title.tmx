@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-down" width="44" height="13" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="1">
+ <tileset firstgid="1" source="title_background.tsx"/>
+ <tileset firstgid="253" source="country-platform-tiles-example.tsx"/>
+ <layer id="1" name="Background" width="44" height="13">
+  <data encoding="base64" compression="zlib">
+   eJzFzkOvWAEUhdH3atu2bdu2bdu2bdu2bdt2/0ZXB3feNrnpYCV79J0TGREREYWoRCM6MYhJLGITh7jEIz4JSEgiEpOEpCQjOZEhNH+LCKn9J81/vfu//v3bZrBTkJJUpCYNaUlHejKQkUxkJgtZyUZ2cpCTXOQmT0jNYOclH/kpQEEKUZgiFKUYxSlBSUpRmjKUpRzlqUDFkJrBrkRlqlCValSnBjWpRW3qUJd61KcBDWlEY5rQlGYhNYPdnBa0pBWtaUNb2tGeDnSkE53pQle60Z0e9KQXvUNqBrsPfelHfwYwkEEMZghDGcZwRjCSUYxmDGMZx3gmhNQM9kQmMZkpTGUa05nBTGYxmznMZR7zWcBCFrGYJSwNqRnsZSxnBStZxWrWsJZ1rGcDG9nEZrawlW1sZwc72RVSM9i72cNe9rGfAxzkEIc5wlGOcZwTnOQUpznDWc5xPqRmsC9wkUtc5gpXucZ1bnCTW9zmDne5x30e8JBHPOZJSM1gP+UZz3nBS17xmje85R3v+cBHPvGZL3zlG9/5wc+QmsH+BZmJ32w=
+  </data>
+ </layer>
+ <layer id="2" name="Foreground" width="44" height="13">
+  <data encoding="base64" compression="zlib">
+   eJztzudXzQEABuD7+xOtbJVSyApFQnYJmRVZ2XsVskpGWlpGZJMRCUn0secfuOfeD93jy33Peb695z1vKBRPPPH874wKQqHRjGEs40hgPBOYyCQmM4WpTCORJJKZTgqpzAhi+zfNfjozmcVsMpjDXOYxnwVkspBFLCaLbJawlByWxfhvrv3lrGAleaxiNWtYyzrWs4F8CthIIZvYzBaK2Brjv9vsb2cHO9lFMSWUsps9lLGXfeznAAcp5xCHOcLREfp70s4pTnOGs5zjGMc5EYTvnOcCF7lEBZVc5gpXqeIa16PcjJRqnRpuU8sd7nKDm9wKwnfucZ86HlBPA4000cxDWmiNcjNSHuk85glP6eQZbbTTEYTvPKeLF7zkFa95w1ve8Z4PdEe5GSlfdHr4yjd6+c5HPvE5CN/p4wc/+UU/vxngD4P85R9DUW5GyjCKS5v7
+  </data>
+ </layer>
+</map>

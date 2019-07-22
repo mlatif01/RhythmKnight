@@ -26,6 +26,10 @@ import com.latif.rhythmknight.Tools.WorldContactListener;
 
 public class PlayScreen implements Screen {
 
+  // test boolean variables for setting stage
+  private boolean isStage_1 = true;
+  private boolean isStage_2 = false;
+
   private float gameTime = 0f;
 
   // reference to the game, used to set screens
@@ -54,10 +58,10 @@ public class PlayScreen implements Screen {
   private int enemiesToKill;
 
   // Cutscene variables
-  // boolean representing if cutscene has been executed
+  // boolean representing if cutscene has been executed for stage 1
   private boolean cameraPositioned = false;
   private final float cameraStop = 5.0f;
-  private final float cameraSpeed = 0.5f;
+  private final float cameraSpeed = 0.3f;
 
   // Box2d variables
   private World world;
@@ -109,7 +113,12 @@ public class PlayScreen implements Screen {
 
     // create, load and render our game map
     mapLoader = new TmxMapLoader();
-    map = mapLoader.load("level1.tmx");
+    if (isStage_1) {
+        map = mapLoader.load("level1.tmx");
+    }
+    else if (isStage_2) {
+        map = mapLoader.load("level2.tmx");
+    }
     mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / RhythmKnight.PPM);
 
     // centre the gameCam to the correct aspect ratio at start of the game
@@ -235,21 +244,21 @@ public class PlayScreen implements Screen {
   public void update(float deltaTime) {
 
     // play cutscene at beginning of game
-    if (!cameraPositioned) {
+    if (!cameraPositioned && isStage_1) {
       animateStartCutsceneFrames(deltaTime);
     } else if (cameraPositioned) {
       player.readyToBattle = true;
     }
 
     // focus camera on player
-    if (cameraPositioned && gameCam.zoom > 0.7) {
+    if (cameraPositioned && gameCam.zoom > 0.7 && isStage_1) {
       gameCam.zoom -= 0.003;
       gameCam.position.y -= 0.003;
       gameCam.position.x -= 0.005;
     }
 
     // focus camera away from player and perform end cutscene
-    if (enemiesKilled == enemiesToKill) {
+    if (enemiesKilled == enemiesToKill && isStage_1) {
 //      player.readyToBattle = false;
       gameEndTimer += deltaTime;
       if (gameEndTimer > 1f) {
@@ -316,9 +325,6 @@ public class PlayScreen implements Screen {
     // update Hud
     hud.update(deltaTime);
 
-    // update variables on the Hud
-    hud.update(deltaTime);
-
     for (Enemy enemy : creator.getGoblings()) {
       enemy.update(deltaTime);
     }
@@ -344,7 +350,7 @@ public class PlayScreen implements Screen {
     mapRenderer.render();
 
     // render our Box2dDebugLines
-//    b2dr.render(world, gameCam.combined);
+    b2dr.render(world, gameCam.combined);
 
     // set only what the game can see
     game.batch.setProjectionMatrix(gameCam.combined);
