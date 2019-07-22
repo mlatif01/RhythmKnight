@@ -76,7 +76,7 @@ public class TitleScreen implements Screen {
     table.setFillParent(true);
 
     Label rhythmKnightLabel = new Label("RHYTHM KNIGHT", font);
-    Label pressStart = new Label("Touch To Start", font);
+    Label pressStart = new Label("Tap To Start", font);
     stage.addActor(table);
 
     table.add(rhythmKnightLabel).expandX();
@@ -98,7 +98,7 @@ public class TitleScreen implements Screen {
 
     // Start game when screen is touched
     if (Gdx.input.isTouched()) {
-      game.setScreen(new PlayScreen((RhythmKnight) game));
+      game.setScreen(new StageSelect((RhythmKnight) game));
       RhythmKnight.manager.get("audio/music/titletheme.wav", Music.class).stop();
       dispose();
     }

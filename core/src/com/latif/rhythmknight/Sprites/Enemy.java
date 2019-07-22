@@ -10,6 +10,7 @@ public abstract class Enemy extends Sprite {
   protected World world;
   protected PlayScreen screen;
 
+  // TODO
   public Body b2body;
   public Vector2 velocity;
 

@@ -37,9 +37,9 @@ public class GameOver implements Screen {
     table.setFillParent(true);
 
     Label gameOverLabel = new Label("GAME OVER", font);
-    Label playAgainLabel = new Label("Click to Play Again", font);
+    Label playAgainLabel = new Label("Tap to Play Again", font);
     Label StageOverLabel = new Label("STAGE OVER", font);
-    Label WinLabel = new Label("Stage Completed! - Click for Next Stage", font);
+    Label WinLabel = new Label("Stage Completed! - Tap for Next Stage", font);
 
     stage.addActor(table);
 
@@ -71,7 +71,7 @@ public class GameOver implements Screen {
 
     // restart game when screen is touched
     if (Gdx.input.isTouched()) {
-      game.setScreen(new PlayScreen((RhythmKnight) game));
+      game.setScreen(new StageSelect((RhythmKnight) game));
       dispose();
     }
     Gdx.gl.glClearColor(0, 0, 0, 1);

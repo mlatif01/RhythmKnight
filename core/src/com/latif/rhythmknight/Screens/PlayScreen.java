@@ -285,7 +285,6 @@ public class PlayScreen implements Screen {
 
 //     spawn enemies if beat detected - hat is detected
     if (beatDetector.beat.isSnare()) {
-      timer = 0;
 //      Gdx.app.log("BEAT DETECT", "SNARE BEAT: " + (++beatCount));
       // TODO: Improve this
       if (map.getLayers().get(6).getObjects().iterator().hasNext() && cutSceneController.isCameraPositioned()
@@ -322,6 +321,8 @@ public class PlayScreen implements Screen {
 
     // this will only render what the gameCam can see
     mapRenderer.setView(gameCam);
+
+    Gdx.app.log("Timer:", ""+timer);
   }
 
   @Override

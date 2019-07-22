@@ -1,15 +1,13 @@
 package com.latif.rhythmknight.Tools;
 
-import com.badlogic.gdx.Game;
-import com.latif.rhythmknight.Screens.PlayScreen;
-import com.latif.rhythmknight.Sprites.RKnight;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import ddf.minim.*;
+import ddf.minim.AudioBuffer;
+import ddf.minim.AudioPlayer;
+import ddf.minim.Minim;
 import ddf.minim.analysis.BeatDetect;
 
 
@@ -22,25 +20,23 @@ public class BeatDetector {
 
   float eRadius;
 
-  public BeatDetector(){
+  public BeatDetector() {
     setup();
   }
 
   /**
    * Override required method.
    */
-  public String sketchPath(String fileName)
-  {
-    return( new File(fileName).getAbsolutePath() );
+  public String sketchPath(String fileName) {
+    return (new File(fileName).getAbsolutePath());
   }
 
   /**
    * Override required method.
    */
   public InputStream createInput(String fileName)
-          throws FileNotFoundException
-  {
-    return( new FileInputStream(new File(fileName)) );
+          throws FileNotFoundException {
+    return (new FileInputStream(new File(fileName)));
   }
 
   private void setup() {
