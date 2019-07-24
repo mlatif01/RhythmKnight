@@ -7,7 +7,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -29,7 +28,7 @@ public class TitleScreen implements Screen {
 
   private Game game;
 
-  Table table;
+  private Table table;
 
   // loads the map into the game
   private TmxMapLoader mapLoader;
@@ -48,20 +47,15 @@ public class TitleScreen implements Screen {
             RhythmKnight.V_HEIGHT, gameCam);
     stage = new Stage(new FitViewport(RhythmKnight.V_WIDTH, RhythmKnight.V_HEIGHT, new OrthographicCamera()), ((RhythmKnight) game).batch);
 
-    // create, load and render our game map
-//    mapLoader = new TmxMapLoader();
-//    map = mapLoader.load("title.tmx");
-//    mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / RhythmKnight.PPM);
-
     // create parallax scrolling background
     Array<Texture> textures = new Array<Texture>();
-    for(int i = 1; i <=5;i++){
-      textures.add(new Texture(Gdx.files.internal("parallax/img"+i+".png")));
-      textures.get(textures.size-1).setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
+    for (int i = 1; i <= 5; i++) {
+      textures.add(new Texture(Gdx.files.internal("parallax/img" + i + ".png")));
+      textures.get(textures.size - 1).setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
     }
 
     ParallaxBackground parallaxBackground = new ParallaxBackground(textures);
-    parallaxBackground.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+    parallaxBackground.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     parallaxBackground.setSpeed(0.1f);
     stage.addActor(parallaxBackground);
 

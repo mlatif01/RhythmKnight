@@ -1,5 +1,6 @@
 package com.latif.rhythmknight.Sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -67,6 +68,7 @@ public class Gobling extends Enemy {
       death += 1;
       destroyed = true;
       setRegion(goblingDie.getKeyFrame(stateTime, true));
+      Gdx.app.log("Gobling", ""+born);
       stateTime = 0;
     } else if (!destroyed) {
       b2body.setLinearVelocity(velocity);

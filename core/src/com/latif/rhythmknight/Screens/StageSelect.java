@@ -3,7 +3,6 @@ package com.latif.rhythmknight.Screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,8 +14,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -24,7 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 
@@ -46,6 +42,8 @@ public class StageSelect implements Screen {
   private SpriteBatch batch;
 
   private boolean changeScreen = false;
+  private static boolean useBackground1 = true;
+  private String texturePath;
 
   public StageSelect(Game game) {
     this.game = game;
@@ -57,9 +55,9 @@ public class StageSelect implements Screen {
 
     stage = new Stage(viewport, ((RhythmKnight) game).batch);
 
-    txtrLevel1_1 = new Texture(Gdx.files.internal("btn_level_1.png") );
-    txtrLevel1_2 = new Texture(Gdx.files.internal("btn_level_1_2.png") );
-    txtrLevel1_3 = new Texture(Gdx.files.internal("btn_level_1_3.png") );
+    txtrLevel1_1 = new Texture(Gdx.files.internal("btn_level_1.png"));
+    txtrLevel1_2 = new Texture(Gdx.files.internal("btn_level_1_2.png"));
+    txtrLevel1_3 = new Texture(Gdx.files.internal("btn_level_1_3.png"));
     txtrBackground = new Texture(Gdx.files.internal("country-platform-back.png"));
 
     spriteBackground = new Sprite(txtrBackground);
@@ -69,11 +67,24 @@ public class StageSelect implements Screen {
     Table table = new Table();
     table.center();
     table.setFillParent(true);
-    table.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture("country-platform-back.png"))));
+
+    // alternate stage select background
+    if (useBackground1) {
+      texturePath = "country-platform-back.png";
+      useBackground1 = false;
+    }
+    else if (!useBackground1) {
+      texturePath = "pixel_background.png";
+      useBackground1 = true;
+    }
+
+    // set background
+    table.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(texturePath))));
     ImageButton btnLevel1_1 = new ImageButton(
             new TextureRegionDrawable(
                     new TextureRegion(txtrLevel1_1)));
 
+    // create buttons
     btnLevel1_1.setPosition(50.f, 50.f, Align.bottomLeft);
     btnLevel1_1.setSize(70, 70);
     table.addActor(btnLevel1_1);
@@ -99,11 +110,10 @@ public class StageSelect implements Screen {
 
     Gdx.input.setInputProcessor(stage); //Start taking input from the ui
 
-    btnLevel1_1.addListener(new EventListener()
-    {
+    // event listener for tapping on stage
+    btnLevel1_1.addListener(new EventListener() {
       @Override
-      public boolean handle(Event event)
-      {
+      public boolean handle(Event event) {
         if (Gdx.input.isTouched()) {
           changeScreen = true;
         }
@@ -121,13 +131,16 @@ public class StageSelect implements Screen {
 
   @Override
   public void render(float delta) {
+    // clear screen and set projection matrix
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     batch.setProjectionMatrix(gameCam.combined);
 
+    // draw stage components
     stage.draw();
 
+    // change screen when user taps on button
     if (changeScreen) {
       RhythmKnight.manager.get("audio/sounds/gamerestart.wav", Sound.class).play();
       game.setScreen(new PlayScreen((RhythmKnight) game));

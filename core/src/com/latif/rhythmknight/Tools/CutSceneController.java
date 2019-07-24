@@ -17,7 +17,7 @@ public class CutSceneController {
     this.screen = screen;
   }
 
-  public void animateStartCutsceneFrames(float deltaTime) {
+  public void animateStartCutscene(float deltaTime) {
     // Move screen to correct position at start of game
     // **Improve the implementation of this**
     if (screen.getGameCam().position.x < cameraStop) {
@@ -33,10 +33,18 @@ public class CutSceneController {
     }
   }
 
-
   public boolean isCameraPositioned() {
     return cameraPositioned;
   }
+
+  public void animateEndCutscene() {
+    screen.getPlayer().b2body.applyLinearImpulse(new Vector2(0.05f, 0f), screen.getPlayer().b2body.getWorldCenter(), true);
+    screen.getGameCam().zoom += 0.0025f;
+    screen.getGameCam().position.y += 0.003f;
+    screen.getGameCam().position.x += 0.005f;
+  }
+
+
 }
 
 
