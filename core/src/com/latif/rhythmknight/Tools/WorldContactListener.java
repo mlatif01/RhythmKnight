@@ -14,7 +14,7 @@ import com.latif.rhythmknight.Sprites.RKnight;
 
 public class WorldContactListener implements ContactListener {
 
-  public static boolean swordOnObject = false;
+  private boolean swordOnObject = false;
 
   // called when two fixtures begin to collide
   @Override
@@ -79,7 +79,7 @@ public class WorldContactListener implements ContactListener {
     }
   }
 
-  public static boolean isSwordOnObject() {
+  public boolean isSwordOnObject() {
     return swordOnObject;
   }
 

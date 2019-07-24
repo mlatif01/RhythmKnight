@@ -18,7 +18,7 @@ import com.latif.rhythmknight.Screens.PlayScreen;
 public class Gobling extends Enemy {
 
   private float stateTime;
-  public float born = 0f;
+  private float born = 0f;
   private Array<TextureRegion> frames;
 
   private boolean setToDestroy;
@@ -35,8 +35,8 @@ public class Gobling extends Enemy {
   private Animation<TextureRegion> goblingHurt;
   private Animation<TextureRegion> goblingDie;
 
-  // track how many goblings are dead
-  public static int death = 0;
+  // track how many goblings are dead from other screens
+  private static int goblingDeath;
 
 
   public Gobling(PlayScreen screen, float x, float y) {
@@ -45,8 +45,9 @@ public class Gobling extends Enemy {
     defineEnemy();
     defineAnimations();
     stateTime = 0;
+    goblingDeath = 0;
 
-    // create RKnight idle texture region
+    // create idle texture region
 //    goblingIdleTextureRegion = new TextureRegion(screen.getAtlas_2().getTextures().first(), 443, 1, 25, 25);
 //    goblingDieTextureRegion = new TextureRegion(screen.getAtlas_2().getTextures().first(), 171, 1, 25, 25);
 
@@ -59,13 +60,17 @@ public class Gobling extends Enemy {
     destroyed = false;
   }
 
+  public static void resetDeath() {
+    goblingDeath = 0;
+  }
+
 
   public void update(float deltaTime) {
     born += deltaTime;
     stateTime += deltaTime;
     if (setToDestroy && !destroyed) {
       world.destroyBody(b2body);
-      death += 1;
+      goblingDeath += 1;
       destroyed = true;
       setRegion(goblingDie.getKeyFrame(stateTime, true));
       Gdx.app.log("Gobling", ""+born);
@@ -75,7 +80,7 @@ public class Gobling extends Enemy {
       setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
       setRegion(goblingMove.getKeyFrame(stateTime, true));
     }
-    else if (destroyed) {
+    else {
       setRegion(goblingDie.getKeyFrame(stateTime, false));
     }
   }
@@ -144,18 +149,17 @@ public class Gobling extends Enemy {
 
   @Override
   public void hitOnHead() {
-    if (RKnight.isAttacking) {
+    if (screen.getPlayer().checkIsAttacking()) {
       setToDestroy = true;
       Hud.updateScore(100);
       screen.incrementEnemiesKilled();
-//      System.out.println("DEATH: " + born);
       RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(1f);
     }
   }
 
   @Override
   public void touchingRKnight() {
-    RKnight.reduceHp();
+    screen.getPlayer().reduceHp();
     setToDestroy = true;
     screen.incrementEnemiesKilled();
     RhythmKnight.manager.get("audio/sounds/goblinghit.wav", Sound.class).play(1f);

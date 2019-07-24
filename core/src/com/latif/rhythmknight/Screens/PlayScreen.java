@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Sprites.Enemy;
+import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
 import com.latif.rhythmknight.Tools.BeatDetector;
@@ -157,7 +158,7 @@ public class PlayScreen implements Screen {
     // enemy spawn, kill, toKill variables
     enemiesSpawned = 0;
     enemiesKilled = 0;
-    enemiesToKill = 30;
+    enemiesToKill = 5;
 
     // controls cut scene events
     cutSceneController = new CutSceneController(this);
@@ -357,6 +358,8 @@ public class PlayScreen implements Screen {
 
     if (gameOver()) {
 //      RhythmKnight.manager.clear();
+      player.setReadyToBattle(false);
+      Gobling.resetDeath();
       game.setScreen(new GameOver(game));
       dispose();
     }

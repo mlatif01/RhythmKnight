@@ -101,8 +101,6 @@ public class GameOver implements Screen {
 
   @Override
   public void dispose() {
-    Gobling.death = 0;
-    RKnight.readyToBattle = false;
     RhythmKnight.manager.get("audio/music/gamewin.ogg", Music.class).stop();
     RhythmKnight.manager.get("audio/music/gamewin2.wav", Music.class).stop();
     RhythmKnight.manager.get("audio/music/gameover.ogg", Music.class).stop();

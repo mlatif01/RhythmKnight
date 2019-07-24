@@ -10,6 +10,9 @@ import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Screens.PlayScreen;
 
 public class Stone extends InteractiveTileObject {
+
+  PlayScreen screen;
+
   public Stone(PlayScreen screen, MapObject object) {
     super(screen, object);
     // set user data to the object itself
@@ -26,7 +29,7 @@ public class Stone extends InteractiveTileObject {
 
   @Override
   public void checkSwordHit() {
-    if (RKnight.isAttacking) {
+    if (screen.getPlayer().checkIsAttacking()) {
       Gdx.app.log("Stone", "Sword Hit");
       getCell().setTile(null);
       setCategoryFilter(RhythmKnight.DESTROYED_BIT);

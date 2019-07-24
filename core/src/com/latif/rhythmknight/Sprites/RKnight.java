@@ -41,7 +41,7 @@ public class RKnight extends Sprite {
   public AttackState nextAttackState;
 
   // state to check if RKnight is ready to battle
-  public static boolean readyToBattle = false;
+  public boolean readyToBattle = false;
 
   // check if b2body has been destroyed
   public boolean setToDestroy = false;
@@ -81,7 +81,7 @@ public class RKnight extends Sprite {
   // boolean representing if player is facing right
   private boolean runningRight;
   // boolean to check whether attack animation should be executed
-  public static boolean isAttacking;
+  private boolean isAttacking;
   // if attacking canMove should be false
   public static boolean canMove = true;
   // counter to help execute full slash animation
@@ -192,6 +192,10 @@ public class RKnight extends Sprite {
     }
   }
 
+  public boolean checkIsAttacking() {
+    return isAttacking;
+  }
+
   public static boolean isDead() {
     return RKnightIsDead;
   }
@@ -204,7 +208,7 @@ public class RKnight extends Sprite {
     return hp;
   }
 
-  public static void reduceHp() {
+  public void reduceHp() {
     hp -= 10;
   }
 
