@@ -55,7 +55,6 @@ task afterEclipseImport(description: "Post processing after project generation",
 }
 
 dependencies {
-    implementation 'net.compartmental.code:minim:2.2.2'
     implementation project(path: ':TarsosDSP-latest')
     implementation project(path: ':lwbd')
 }

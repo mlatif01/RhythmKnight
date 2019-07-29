@@ -143,7 +143,7 @@ public class StageSelect implements Screen {
     // change screen when user taps on button
     if (changeScreen) {
       RhythmKnight.manager.get("audio/sounds/gamerestart.wav", Sound.class).play();
-      game.setScreen(new PlayScreen((RhythmKnight) game));
+      game.setScreen(new LoadScreen((RhythmKnight) game));
     }
 
   }

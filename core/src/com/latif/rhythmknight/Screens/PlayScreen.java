@@ -22,9 +22,11 @@ import com.latif.rhythmknight.Sprites.Enemy;
 import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
-import com.latif.rhythmknight.Tools.BeatDetector;
 import com.latif.rhythmknight.Tools.CutSceneController;
+import com.latif.rhythmknight.Tools.LWBDBeatDetector;
 import com.latif.rhythmknight.Tools.WorldContactListener;
+
+//import com.latif.rhythmknight.Tools.BeatDetector;
 
 public class PlayScreen implements Screen {
 
@@ -41,7 +43,7 @@ public class PlayScreen implements Screen {
   private TextureAtlas atlas_3;
 
   // reference to beat detector
-  private BeatDetector beatDetector;
+//  private BeatDetector beatDetector;
 
   // reference to the Hud
   private Hud hud;
@@ -92,6 +94,7 @@ public class PlayScreen implements Screen {
 
   // Constructor for initialising the playscreen - as we need to send the game to the screen
   public PlayScreen(RhythmKnight game) {
+
     // setup debug logger
     Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
@@ -142,7 +145,7 @@ public class PlayScreen implements Screen {
     world.setContactListener(new WorldContactListener());
 
     // instantiation of BeatDetector class
-    beatDetector = new BeatDetector();
+//    beatDetector = new BeatDetector();
 
     // call this timer when gameEnds
     gameEndTimer = 0f;
@@ -152,34 +155,35 @@ public class PlayScreen implements Screen {
     deltaFromSpawnedToPlayer = 0f;
 
     // TODO: Confirm if this needds to be used
-    // we use this to create enemy 3.35f before beat is detected to synchronise with slash
-    deltaSpawnToPlayer = 2.0f;
+    // we use this to create enemy before beat is detected to synchronise with slash
+    // current distance in time between spawned and player
+    deltaSpawnToPlayer = 2.1f;
 
     // enemy spawn, kill, toKill variables
     enemiesSpawned = 0;
     enemiesKilled = 0;
-    enemiesToKill = 5;
+    enemiesToKill = 50;
 
     // controls cut scene events
     cutSceneController = new CutSceneController(this);
 
     // set up music for the current Screen - Old (Without beat detection)
-//    music = RhythmKnight.manager.get("audio/music/background2.ogg", Music.class);
-//    music.setLooping(true);
-//    music.setVolume(0.5f);
-//    music.play();
+    music = RhythmKnight.manager.get("audio/song1.ogg", Music.class);
+    music.setVolume(0.5f);
+    music.play();
   }
+
 
   public boolean gameOver() {
     // TODO: Check if static is needed here
     if ((player.currentState == RKnight.State.DEAD && player.getStateTimer() > 3)) {
       // stop music when player dies
-      beatDetector.player.pause();
-//      music.stop();
+//      beatDetector.player.pause();
+      music.stop();
       return true;
     } else if (enemiesKilled >= enemiesToKill && enemiesSpawned >= enemiesKilled && player.getStateTimer() > 4 && gameEndTimer > 3.0f) {
-      beatDetector.player.pause();
-//      music.stop();
+//      beatDetector.player.pause();
+      music.stop();
       return true;
     } else {
       return false;
@@ -261,36 +265,9 @@ public class PlayScreen implements Screen {
 
     timer += deltaTime;
 
-    // beat detector logic
-    beatDetector.beat.detect(beatDetector.player.mix);
-
-
-    // beat detection test
-//    if(beatDetector.beat.isHat()) {
-//      System.out.println("HAT");
-//    }
-
-//    if(beatDetector.beat.isSnare()) {
-//      System.out.println("SNARE");
-//    }
-
-//    if (beatDetector.beat.isKick()) {
-//      System.out.println("KICK");
-//    }
-
-
-//     spawn enemies if beat detected - hat is detected
-    if (beatDetector.beat.isSnare()) {
-      Gdx.app.log("BEAT DETECT", "SNARE BEAT: " + (++beatCount));
-      // TODO: Improve this
-      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cutSceneController.isCameraPositioned()
-              && enemiesSpawned < enemiesToKill) {
-//        Gdx.app.log("Gobling", "Spawned at time: " + gameTime);
-//        Gdx.app.log("Gobling", "Should spawn at time: " + (gameTime - deltaSpawnToPlayer));
-        creator.spawnGobling();
-        enemiesSpawned += 1;
-      }
-    }
+    // ADD BEAT DETECTION LOGIC HERE
+//    minimBeatDetector();
+    lwbdBeatDetector();
 
     // handles any key inputs or events
     handleInput(deltaTime);
@@ -318,6 +295,53 @@ public class PlayScreen implements Screen {
     // this will only render what the gameCam can see
     mapRenderer.setView(gameCam);
 
+  }
+
+  public void minimBeatDetector() {
+//    // beat detector logic
+//    beatDetector.beat.detect(beatDetector.player.mix);
+//
+//    // beat detection test
+////    if(beatDetector.beat.isHat()) {
+////      System.out.println("HAT");
+////    }
+//
+////    if(beatDetector.beat.isSnare()) {
+////      System.out.println("SNARE");
+////    }
+//
+////    if (beatDetector.beat.isKick()) {
+////      System.out.println("KICK");
+////    }
+//
+//    // MINIM BEAT DETECTION
+////     spawn enemies if beat detected
+//    if (beatDetector.beat.isSnare()) {
+//      Gdx.app.log("BEAT DETECT", "BEAT: " + (++beatCount));
+//      // TODO: Improve this
+//      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cutSceneController.isCameraPositioned()
+//              && enemiesSpawned < enemiesToKill) {
+////        Gdx.app.log("Gobling", "Spawned at time: " + gameTime);
+////        Gdx.app.log("Gobling", "Should spawn at time: " + (gameTime - deltaSpawnToPlayer));
+//        creator.spawnGobling();
+//        enemiesSpawned += 1;
+//      }
+//    }
+  }
+
+  public void lwbdBeatDetector() {
+    // LWBD BEAT DETECTION
+    if (gameTime > LWBDBeatDetector.beatList.get(0) && !cutSceneController.isCameraPositioned()) {
+      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + LWBDBeatDetector.beatList.get(0));
+      LWBDBeatDetector.beatList.remove(0);
+    } else if ((gameTime - deltaSpawnToPlayer) > LWBDBeatDetector.beatList.get(0) && cutSceneController.isCameraPositioned() && enemiesSpawned < enemiesToKill) {
+      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + LWBDBeatDetector.beatList.get(0));
+      System.out.println("SPAWN ENEMY");
+      creator.spawnGobling();
+      enemiesSpawned += 1;
+      LWBDBeatDetector.beatList.remove(0);
+
+    }
   }
 
   @Override

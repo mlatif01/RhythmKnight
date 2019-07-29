@@ -90,9 +90,7 @@ task run(type: Exec) {
 }
 
 dependencies {
-    implementation 'net.compartmental.code:minim:2.2.2'
     implementation project(path: ':TarsosDSP-latest')
-    implementation project(path: ':lwbd')
     implementation project(path: ':lwbd')
 }
 
