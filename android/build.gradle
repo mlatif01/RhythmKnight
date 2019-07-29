@@ -90,6 +90,7 @@ task run(type: Exec) {
 }
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':TarsosDSP-latest')
     implementation project(path: ':lwbd')
 }
@@ -147,3 +148,5 @@ idea {
         }
     }
 }
+
+

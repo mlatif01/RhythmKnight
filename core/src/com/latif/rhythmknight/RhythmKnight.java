@@ -23,6 +23,9 @@ public class RhythmKnight extends Game {
   public static final short GOBLING_HEAD_BIT = 64;
   public static final short SWORD_BIT = 128;
 
+  public static final String STAGE_ONE_MUSIC = "audio/song1.ogg";
+  public static final String STAGE_ONE_MP3 = "audio/song1.mp3";
+
   /* AssetManager will be used in a static context to save time */
   public static AssetManager manager;
 
@@ -44,6 +47,7 @@ public class RhythmKnight extends Game {
     manager.load("audio/music/background.ogg", Music.class);
     manager.load("audio/music/background2.ogg", Music.class);
     manager.load("audio/song1.ogg", Music.class);
+    manager.load("audio/song2.ogg", Music.class);
     manager.load("audio/sounds/footsteps.wav", Sound.class);
     manager.load("audio/sounds/swordsound.wav", Music.class);
     manager.load("audio/sounds/meleesound.wav", Sound.class);

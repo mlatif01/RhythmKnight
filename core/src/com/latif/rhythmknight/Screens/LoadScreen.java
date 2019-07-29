@@ -73,7 +73,7 @@ public class LoadScreen implements Screen {
   public void setupLWBD() {
     processing = true;
     // Specify song file name here
-    lwbd = new LWBDBeatDetector("audio/song1.mp3");
+    lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_MP3);
     processed = true;
   }
 

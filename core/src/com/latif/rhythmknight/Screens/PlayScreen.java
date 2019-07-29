@@ -167,9 +167,9 @@ public class PlayScreen implements Screen {
     // controls cut scene events
     cutSceneController = new CutSceneController(this);
 
-    // set up music for the current Screen - Old (Without beat detection)
-    music = RhythmKnight.manager.get("audio/song1.ogg", Music.class);
-    music.setVolume(0.5f);
+    // set up music for the current Screen - LWBD METHOD
+    music = RhythmKnight.manager.get(RhythmKnight.STAGE_ONE_MUSIC, Music.class);
+    music.setVolume(0.7f);
     music.play();
   }
 
@@ -267,7 +267,7 @@ public class PlayScreen implements Screen {
 
     // ADD BEAT DETECTION LOGIC HERE
 //    minimBeatDetector();
-    lwbdBeatDetector();
+//    lwbdBeatDetector();
 
     // handles any key inputs or events
     handleInput(deltaTime);
@@ -340,7 +340,6 @@ public class PlayScreen implements Screen {
       creator.spawnGobling();
       enemiesSpawned += 1;
       LWBDBeatDetector.beatList.remove(0);
-
     }
   }
 
