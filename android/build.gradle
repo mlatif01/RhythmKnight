@@ -89,11 +89,6 @@ task run(type: Exec) {
     commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.latif.rhythmknight/com.latif.rhythmknight.AndroidLauncher'
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':TarsosDSP-latest')
-    implementation project(path: ':lwbd')
-}
 
 // sets up the Android Eclipse project, using the old Ant based build.
 eclipse {

@@ -2,8 +2,9 @@ apply plugin: "java"
 
 sourceCompatibility = 1.6
 dependencies {
-    implementation project(path: ':TarsosDSP-latest')
-    implementation project(path: ':lwbd')
+    implementation fileTree(dir: 'libs', include: '*.jar')
+//    implementation project(path: ':TarsosDSP-latest')
+//    implementation project(path: ':lwbd')
 }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

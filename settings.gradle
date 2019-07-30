@@ -1,1 +1,1 @@
-include 'desktop', 'android', 'core', ':TarsosDSP-latest', ':lwbd'
+include 'desktop', 'android', 'core'

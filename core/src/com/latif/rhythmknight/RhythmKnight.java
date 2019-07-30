@@ -48,6 +48,7 @@ public class RhythmKnight extends Game {
     manager.load("audio/music/background2.ogg", Music.class);
     manager.load("audio/song1.ogg", Music.class);
     manager.load("audio/song2.ogg", Music.class);
+    manager.load("audio/song0.wav", Music.class);
     manager.load("audio/sounds/footsteps.wav", Sound.class);
     manager.load("audio/sounds/swordsound.wav", Music.class);
     manager.load("audio/sounds/meleesound.wav", Sound.class);

@@ -54,8 +54,3 @@ task afterEclipseImport(description: "Post processing after project generation",
   }
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':TarsosDSP-latest')
-    implementation project(path: ':lwbd')
-}

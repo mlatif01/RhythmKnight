@@ -1,11 +1,10 @@
-package com.latif.rhythmknight.BeatDetectionTest;
+package com.latif.rhythmknight.Tools;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import be.tarsos.dsp.AudioDispatcher;
@@ -15,11 +14,11 @@ import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
 
-public class TestTarsos {
+public class TarsosPitchDetector {
 
   public static ArrayList<Float> pitchList = new ArrayList<Float>();
 
-  public static void main(String[] args) throws IOException, UnsupportedAudioFileException, NegativeArraySizeException, LineUnavailableException {
+  public TarsosPitchDetector() throws IOException, UnsupportedAudioFileException {
     AudioDispatcher dispatcher;
     String fileName = "audio/song0.wav";
     File audioFile = new File(fileName);
@@ -29,7 +28,7 @@ public class TestTarsos {
       @Override
       public void handlePitch(PitchDetectionResult pitchDetectionResult,
                               AudioEvent audioEvent) {
-        if (pitchDetectionResult.getPitch() > 150) {
+        if (pitchDetectionResult.getPitch() > 180f) {
           pitchList.add((float)audioEvent.getTimeStamp());
         }
         System.out.println(audioEvent.getTimeStamp() + " " + pitchDetectionResult.getPitch());
@@ -42,4 +41,9 @@ public class TestTarsos {
 
     System.out.println(pitchList.size());
   }
+
+  public static ArrayList<Float> getPitchListCopy() {
+    return (ArrayList<Float>) pitchList.clone();
+  }
+
 }

@@ -3,8 +3,6 @@ package com.latif.rhythmknight.Screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -15,18 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
-import com.latif.rhythmknight.Sprites.Gobling;
-import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.LWBDBeatDetector;
+import com.latif.rhythmknight.Tools.TarsosPitchDetector;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.io.IOException;
 
-import featherdev.lwbd.Beat;
-import featherdev.lwbd.decoders.JLayerMp3Decoder;
-import featherdev.lwbd.decoders.LwbdDecoder;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 /*
 Loading screen for processing using LWBD
@@ -42,7 +34,8 @@ public class LoadScreen implements Screen {
   private boolean processing;
   private float screenTimer;
 
-  LWBDBeatDetector lwbd;
+  private LWBDBeatDetector lwbd;
+  private TarsosPitchDetector tarsos;
 
   public LoadScreen(Game game) {
     this.game = game;
@@ -72,8 +65,15 @@ public class LoadScreen implements Screen {
 
   public void setupLWBD() {
     processing = true;
-    // Specify song file name here
+    // Specify song file name here with beat detection library to use
     lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_MP3);
+    processed = true;
+  }
+
+  public void setupTarsos() throws IOException, UnsupportedAudioFileException {
+    processing = true;
+    // Specify song file name here with beat detection library to use
+    tarsos = new TarsosPitchDetector();
     processed = true;
   }
 
@@ -87,6 +87,15 @@ public class LoadScreen implements Screen {
 
     if (!processing && screenTimer > 2f) {
       setupLWBD();
+
+//      try {
+//        setupTarsos();
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      } catch (UnsupportedAudioFileException e) {
+//        e.printStackTrace();
+//      }
+
       screenTimer = 0f;
     }
 

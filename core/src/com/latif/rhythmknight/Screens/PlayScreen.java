@@ -24,11 +24,18 @@ import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
 import com.latif.rhythmknight.Tools.CutSceneController;
 import com.latif.rhythmknight.Tools.LWBDBeatDetector;
+import com.latif.rhythmknight.Tools.TarsosPitchDetector;
 import com.latif.rhythmknight.Tools.WorldContactListener;
+
+import java.util.ArrayList;
 
 //import com.latif.rhythmknight.Tools.BeatDetector;
 
 public class PlayScreen implements Screen {
+
+  // beat lists for BEAT DETECTION
+  private ArrayList<Float> lwbdBeatList;
+  private ArrayList<Float> tarsosPitchList;
 
   // boolean variables for choosing between stages
   private boolean isStage_1 = true;
@@ -171,6 +178,10 @@ public class PlayScreen implements Screen {
     music = RhythmKnight.manager.get(RhythmKnight.STAGE_ONE_MUSIC, Music.class);
     music.setVolume(0.7f);
     music.play();
+
+    // BEAT DETECTION LISTS INSTANTIATION
+    lwbdBeatList = LWBDBeatDetector.getBeatListCopy();
+//    tarsosPitchList = TarsosPitchDetector.getPitchListCopy();
   }
 
 
@@ -267,7 +278,8 @@ public class PlayScreen implements Screen {
 
     // ADD BEAT DETECTION LOGIC HERE
 //    minimBeatDetector();
-//    lwbdBeatDetector();
+    lwbdBeatDetector();
+//    tarsosPitchDetector();
 
     // handles any key inputs or events
     handleInput(deltaTime);
@@ -331,16 +343,31 @@ public class PlayScreen implements Screen {
 
   public void lwbdBeatDetector() {
     // LWBD BEAT DETECTION
-    if (gameTime > LWBDBeatDetector.beatList.get(0) && !cutSceneController.isCameraPositioned()) {
-      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + LWBDBeatDetector.beatList.get(0));
-      LWBDBeatDetector.beatList.remove(0);
-    } else if ((gameTime - deltaSpawnToPlayer) > LWBDBeatDetector.beatList.get(0) && cutSceneController.isCameraPositioned() && enemiesSpawned < enemiesToKill) {
-      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + LWBDBeatDetector.beatList.get(0));
+    if (gameTime > lwbdBeatList.get(0) && !cutSceneController.isCameraPositioned()) {
+      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + lwbdBeatList.get(0));
+      lwbdBeatList.remove(0);
+    } else if ((gameTime) > lwbdBeatList.get(0) && cutSceneController.isCameraPositioned() && enemiesSpawned < enemiesToKill) {
+      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + lwbdBeatList.get(0));
       System.out.println("SPAWN ENEMY");
       creator.spawnGobling();
       enemiesSpawned += 1;
-      LWBDBeatDetector.beatList.remove(0);
+      lwbdBeatList.remove(0);
     }
+  }
+
+  public void tarsosPitchDetector() {
+    // TarsosDSP pitch detection logic
+    if (gameTime > tarsosPitchList.get(0) && !cutSceneController.isCameraPositioned()) {
+      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + tarsosPitchList.get(0));
+      tarsosPitchList.remove(0);
+    } else if ((gameTime) > tarsosPitchList.get(0) && cutSceneController.isCameraPositioned() && enemiesSpawned < enemiesToKill) {
+      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + tarsosPitchList.get(0));
+      System.out.println("SPAWN ENEMY");
+      creator.spawnGobling();
+      enemiesSpawned += 1;
+      tarsosPitchList.remove(0);
+    }
+
   }
 
   @Override
