@@ -1,6 +1,5 @@
 package com.latif.rhythmknight.Tools;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -11,16 +10,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pools;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Screens.PlayScreen;
 import com.latif.rhythmknight.Sprites.Gobling;
-import com.latif.rhythmknight.Sprites.RKnight;
-import com.latif.rhythmknight.Sprites.Stone;
-
-import org.w3c.dom.css.Rect;
-
-import java.util.Iterator;
 
 public class B2WorldCreator {
 

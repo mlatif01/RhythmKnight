@@ -24,12 +24,9 @@ import com.latif.rhythmknight.Sprites.RKnight;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
 import com.latif.rhythmknight.Tools.CutSceneController;
 import com.latif.rhythmknight.Tools.LWBDBeatDetector;
-import com.latif.rhythmknight.Tools.TarsosPitchDetector;
 import com.latif.rhythmknight.Tools.WorldContactListener;
 
 import java.util.ArrayList;
-
-//import com.latif.rhythmknight.Tools.BeatDetector;
 
 public class PlayScreen implements Screen {
 
@@ -50,7 +47,7 @@ public class PlayScreen implements Screen {
   private TextureAtlas atlas_3;
 
   // reference to beat detector
-//  private BeatDetector beatDetector;
+//  private BeatDetector minimBeatDetector;
 
   // reference to the Hud
   private Hud hud;
@@ -151,8 +148,8 @@ public class PlayScreen implements Screen {
     // identifying collision objects
     world.setContactListener(new WorldContactListener());
 
-    // instantiation of BeatDetector class
-//    beatDetector = new BeatDetector();
+    // instantiation of Minim BeatDetector class
+//    minimBeatDetector = new BeatDetector();
 
     // call this timer when gameEnds
     gameEndTimer = 0f;
@@ -174,8 +171,17 @@ public class PlayScreen implements Screen {
     // controls cut scene events
     cutSceneController = new CutSceneController(this);
 
-    // set up music for the current Screen - LWBD METHOD
-    music = RhythmKnight.manager.get(RhythmKnight.STAGE_ONE_MUSIC, Music.class);
+    String song;
+    // set up music for the current Screen - LWBD METHOD - specify ogg file
+    if (!RhythmKnight.switcher) {
+      song = RhythmKnight.STAGE_ONE_MUSIC;
+      RhythmKnight.switcher = true;
+    } else {
+      song = RhythmKnight.STAGE_ONE_ALTERNATE_MUSIC;
+      RhythmKnight.switcher = false;
+    }
+
+    music = RhythmKnight.manager.get(song, Music.class);
     music.setVolume(0.7f);
     music.play();
 
@@ -224,18 +230,18 @@ public class PlayScreen implements Screen {
   public void handleInput(float deltaTime) {
 
     // Handling input for RK actions
-    if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-      player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
-    }
-    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && (player.b2body.getLinearVelocity().x <= 2)
-            && player.canMove) {
-      player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
-    }
-    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (player.b2body.getLinearVelocity().x >= -2)
-            && player.canMove) {
-      player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
-    }
-    if (Gdx.input.isTouched() || Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+//    if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+//      player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
+//    }
+//    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && (player.b2body.getLinearVelocity().x <= 2)
+//            && player.canMove) {
+//      player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
+//    }
+//    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (player.b2body.getLinearVelocity().x >= -2)
+//            && player.canMove) {
+//      player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+//    }
+    if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
       player.handleSlash();
     }
 
@@ -310,25 +316,25 @@ public class PlayScreen implements Screen {
   }
 
   public void minimBeatDetector() {
-//    // beat detector logic
-//    beatDetector.beat.detect(beatDetector.player.mix);
-//
+    // beat detector logic
+//    minimBeatDetector.beat.detect(minimBeatDetector.player.mix);
+
 //    // beat detection test
-////    if(beatDetector.beat.isHat()) {
-////      System.out.println("HAT");
-////    }
+//    if(minimBeatDetector.beat.isHat()) {
+//      System.out.println("HAT");
+//    }
 //
-////    if(beatDetector.beat.isSnare()) {
-////      System.out.println("SNARE");
-////    }
+//    if(minimBeatDetector.beat.isSnare()) {
+//      System.out.println("SNARE");
+//    }
 //
-////    if (beatDetector.beat.isKick()) {
-////      System.out.println("KICK");
-////    }
+//    if (minimBeatDetector.beat.isKick()) {
+//      System.out.println("KICK");
+//    }
 //
 //    // MINIM BEAT DETECTION
 ////     spawn enemies if beat detected
-//    if (beatDetector.beat.isSnare()) {
+//    if (minimBeatDetector.beat.isSnare()) {
 //      Gdx.app.log("BEAT DETECT", "BEAT: " + (++beatCount));
 //      // TODO: Improve this
 //      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cutSceneController.isCameraPositioned()

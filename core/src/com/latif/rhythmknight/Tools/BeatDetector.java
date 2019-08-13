@@ -7,11 +7,20 @@
 //
 //import ddf.minim.AudioBuffer;
 //import ddf.minim.AudioPlayer;
+//import ddf.minim.AudioSample;
 //import ddf.minim.Minim;
+//import ddf.minim.Recordable;
 //import ddf.minim.analysis.BeatDetect;
+//import ddf.minim.javax.sound.sampled.AudioFormat;
+//import ddf.minim.spi.AudioOut;
+//import ddf.minim.spi.AudioRecording;
+//import ddf.minim.spi.AudioRecordingStream;
+//import ddf.minim.spi.AudioStream;
+//import ddf.minim.spi.MinimServiceProvider;
+//import ddf.minim.spi.SampleRecorder;
 //
 //
-//public class BeatDetector {
+//public class BeatDetector implements MinimServiceProvider {
 //
 //  Minim minim;
 //  public AudioPlayer player;
@@ -19,6 +28,10 @@
 //  public BeatDetect beat;
 //
 //  float eRadius;
+//
+//  public AudioPlayer getPlayer() {
+//    return player;
+//  }
 //
 //  public BeatDetector() {
 //    setup();
@@ -57,4 +70,63 @@
 //
 //  }
 //
+//  @Override
+//  public void start() {
+//
+//  }
+//
+//  @Override
+//  public void stop() {
+//
+//  }
+//
+//  @Override
+//  public void debugOn() {
+//
+//  }
+//
+//  @Override
+//  public void debugOff() {
+//
+//  }
+//
+//  @Override
+//  public AudioRecording getAudioRecording(String s) {
+//    return null;
+//  }
+//
+//  @Override
+//  public AudioRecordingStream getAudioRecordingStream(String s, int i, boolean b) {
+//    return null;
+//  }
+//
+//  @Override
+//  public AudioStream getAudioInput(int i, int i1, float v, int i2) {
+//    return null;
+//  }
+//
+//  @Override
+//  public AudioOut getAudioOutput(int i, int i1, float v, int i2) {
+//    return null;
+//  }
+//
+//  @Override
+//  public AudioSample getAudioSample(String s, int i) {
+//    return null;
+//  }
+//
+//  @Override
+//  public AudioSample getAudioSample(float[] floats, AudioFormat audioFormat, int i) {
+//    return null;
+//  }
+//
+//  @Override
+//  public AudioSample getAudioSample(float[] floats, float[] floats1, AudioFormat audioFormat, int i) {
+//    return null;
+//  }
+//
+//  @Override
+//  public SampleRecorder getSampleRecorder(Recordable recordable, String s, boolean b) {
+//    return null;
+//  }
 //}

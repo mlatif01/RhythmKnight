@@ -50,6 +50,7 @@ public class GameOver implements Screen {
       table.row();
       table.add(WinLabel).expandX().padTop(10f);
       RhythmKnight.manager.get("audio/music/gamewin2.wav", Music.class).play();
+      RKnight.incrementExp(50);
     }
     // lose
     else {

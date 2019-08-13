@@ -2,9 +2,10 @@ apply plugin: "java"
 
 sourceCompatibility = 1.6
 dependencies {
-    implementation fileTree(dir: 'libs', include: '*.jar')
-//    implementation project(path: ':TarsosDSP-latest')
-//    implementation project(path: ':lwbd')
+    implementation fileTree(include: '*.jar', dir: 'libs')
+    //    implementation project(path: ':TarsosDSP-latest')
+    //    implementation project(path: ':lwbd')
+    implementation files('libs/Minim-Android-master.jar')
 }
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 

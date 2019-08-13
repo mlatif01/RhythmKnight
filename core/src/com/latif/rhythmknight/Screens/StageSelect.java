@@ -23,6 +23,13 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
+import com.latif.rhythmknight.Sprites.RKnight;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import featherdev.lwbd.decoders.JLayerMp3Decoder;
+import featherdev.lwbd.decoders.LwbdDecoder;
 
 public class StageSelect implements Screen {
 
@@ -85,27 +92,41 @@ public class StageSelect implements Screen {
                     new TextureRegion(txtrLevel1_1)));
 
     // create buttons
-    btnLevel1_1.setPosition(50.f, 50.f, Align.bottomLeft);
-    btnLevel1_1.setSize(70, 70);
+    btnLevel1_1.setPosition(50.f, 10.f, Align.bottomLeft);
+    btnLevel1_1.setSize(80, 80);
     table.addActor(btnLevel1_1);
 
     ImageButton btnLevel1_2 = new ImageButton(
             new TextureRegionDrawable(
                     new TextureRegion(txtrLevel1_2)));
-    btnLevel1_2.setPosition(150.f, 50.f, Align.bottomLeft);
-    btnLevel1_2.setSize(70, 70);
+    btnLevel1_2.setPosition(150.f, 10.f, Align.bottomLeft);
+    btnLevel1_2.setSize(80, 80);
     table.addActor(btnLevel1_2);
 
     ImageButton btnLevel1_3 = new ImageButton(
             new TextureRegionDrawable(
                     new TextureRegion(txtrLevel1_3)));
-    btnLevel1_3.setPosition(250.f, 50.f, Align.bottomLeft);
-    btnLevel1_3.setSize(70, 70);
+    btnLevel1_3.setPosition(250.f, 10.f, Align.bottomLeft);
+    btnLevel1_3.setSize(80, 80);
     table.addActor(btnLevel1_3);
 
 
     Label playLabel = new Label("Stage Select", font);
-    table.add(playLabel).expandX().padBottom(150f);
+    table.add(playLabel).expandX();
+    table.row();
+    Label statsLabel = new Label("RK Stats", font);
+    table.add(statsLabel).padRight(300f);
+    table.row();
+    Label hpLabel = new Label("HP: " + 30, font);
+    table.add(hpLabel).padRight(300f);
+    table.row();
+    Label lvlUpLabel = new Label("LVL UP: " + RKnight.getExpToNextLevel(), font);
+    table.add(lvlUpLabel).padRight(300f);
+    table.row();
+    Label currentLvl = new Label("LVL: " + RKnight.getCurrentLvl(), font);
+    table.add(currentLvl).padBottom(80f).padRight(300f);
+
+    // add actors to table
     stage.addActor(table);
 
     Gdx.input.setInputProcessor(stage); //Start taking input from the ui

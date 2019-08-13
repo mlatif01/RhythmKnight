@@ -37,6 +37,11 @@ public class CutSceneController {
     return cameraPositioned;
   }
 
+  public void setCameraPositioned(boolean b) {
+    cameraPositioned = b;
+  }
+
+
   public void animateEndCutscene() {
     screen.getPlayer().b2body.applyLinearImpulse(new Vector2(0.05f, 0f), screen.getPlayer().b2body.getWorldCenter(), true);
     screen.getGameCam().zoom += 0.0025f;

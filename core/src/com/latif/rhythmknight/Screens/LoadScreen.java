@@ -65,8 +65,13 @@ public class LoadScreen implements Screen {
 
   public void setupLWBD() {
     processing = true;
-    // Specify song file name here with beat detection library to use
-    lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_MP3);
+    // Specify mp3 song file name here with beat detection library to use
+    // TODO: Improve this to allow for loading multiple songs
+    if (!RhythmKnight.switcher) {
+      lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_MP3);
+    } else {
+      lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_ALTERNATE_MP3);
+    }
     processed = true;
   }
 

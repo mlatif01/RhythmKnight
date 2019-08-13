@@ -1,6 +1,5 @@
 package com.latif.rhythmknight.Sprites;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -19,6 +18,8 @@ import com.latif.rhythmknight.Screens.PlayScreen;
 
 
 public class RKnight extends Sprite {
+
+  private static RKnight player;
 
   private float attackDelta = 0f;
 
@@ -47,8 +48,13 @@ public class RKnight extends Sprite {
   public boolean setToDestroy = false;
   public boolean bodyDestroyed = false;
 
-  // float representing RKnights HP
-  private static Integer hp;
+  // represents RKnights HP
+  private static Integer hp = 30;
+  private static int currentLevel = 1;
+  private static Integer exp = 0;
+
+  // temporary - use hashmap to show exp needed for levelling up
+  private static int expToNextLevel = 300;
 
   // current HP
   private final Integer currentHp = 30;
@@ -125,7 +131,6 @@ public class RKnight extends Sprite {
     setBounds(0, 0, 64 / RhythmKnight.PPM, 64 / RhythmKnight.PPM);
     // the actual texture region associated with the sprite
     setRegion(rKnightIdleTextureRegion);
-
   }
 
   public void defineRKnight() {
@@ -157,8 +162,8 @@ public class RKnight extends Sprite {
             RhythmKnight.GOBLING_BIT | RhythmKnight.GOBLING_HEAD_BIT;
     fdef.shape = sword;
     b2body.createFixture(fdef).setUserData("sword");
-
   }
+
 
   // update state of RKnight sprite
   public void update(float deltaTime) {
@@ -214,6 +219,18 @@ public class RKnight extends Sprite {
 
   public static void setHp(int i) {
     hp = i;
+  }
+
+  public static void incrementExp(int n) {
+    exp += n;
+  }
+
+  public static int getExpToNextLevel() {
+    return expToNextLevel - exp;
+  }
+
+  public static int getCurrentLvl() {
+    return currentLevel;
   }
 
   private TextureRegion getFrame(float deltaTime) {
@@ -302,8 +319,7 @@ public class RKnight extends Sprite {
           if (attackDelta < 1.5f) {
 //            System.out.println("ATTACK DELTA: " + attackDelta);
             nextAttackState = AttackState.ATTACK2;
-          }
-          else if (attackDelta > 1.5f) {
+          } else if (attackDelta > 1.5f) {
 //            System.out.println("ATTACK DELTA: " + attackDelta);
             nextAttackState = AttackState.ATTACK1;
           }
@@ -311,12 +327,11 @@ public class RKnight extends Sprite {
           if (attackDelta < 1.5f) {
 //            System.out.println("ATTACK DELTA: " + attackDelta);
             nextAttackState = AttackState.ATTACK3;
-          }
-          else if (attackDelta > 1.5f) {
+          } else if (attackDelta > 1.5f) {
 //            System.out.println("ATTACK DELTA: " + attackDelta);
             nextAttackState = AttackState.ATTACK1;
           }
-        } else if (nextAttackState == AttackState.ATTACK3){
+        } else if (nextAttackState == AttackState.ATTACK3) {
 //          System.out.println("ATTACK DELTA: " + attackDelta);
           nextAttackState = AttackState.ATTACK1;
         }
