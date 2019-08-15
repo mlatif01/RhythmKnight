@@ -117,7 +117,7 @@ public class Gobling extends Enemy {
     // define fixture of sprite
     FixtureDef fdef = new FixtureDef();
     CircleShape shape = new CircleShape();
-    shape.setRadius(12 / RhythmKnight.PPM);
+    shape.setRadius(13 / RhythmKnight.PPM);
     fdef.filter.categoryBits = RhythmKnight.GOBLING_BIT;
     // set what gobling can collide with
     fdef.filter.maskBits = RhythmKnight.GROUND_BIT | RhythmKnight.STONE_BIT |
@@ -129,6 +129,7 @@ public class Gobling extends Enemy {
     // create hit range here
     PolygonShape head = new PolygonShape();
     Vector2[] vertice = new Vector2[4];
+
     vertice[0] = new Vector2(-10, 20).scl(1 / RhythmKnight.PPM);
     vertice[1] = new Vector2(10, 20).scl(1 / RhythmKnight.PPM);
     vertice[2] = new Vector2(-10, 3).scl(1 / RhythmKnight.PPM);
@@ -150,6 +151,7 @@ public class Gobling extends Enemy {
   @Override
   public void hitOnHead() {
     if (screen.getPlayer().checkIsAttacking()) {
+      System.out.println(stateTime);
       setToDestroy = true;
       Hud.updateScore(100);
       screen.incrementEnemiesKilled();

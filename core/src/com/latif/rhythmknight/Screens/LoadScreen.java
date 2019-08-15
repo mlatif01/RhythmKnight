@@ -63,7 +63,7 @@ public class LoadScreen implements Screen {
     table.add(loadingLabel);
   }
 
-  public void setupLWBD() {
+  public void setupLWBD() throws IOException, ClassNotFoundException {
     processing = true;
     // Specify mp3 song file name here with beat detection library to use
     // TODO: Improve this to allow for loading multiple songs
@@ -71,6 +71,18 @@ public class LoadScreen implements Screen {
       lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_MP3);
     } else {
       lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_ALTERNATE_MP3);
+    }
+    processed = true;
+  }
+
+  public void setupLWBDWBD() throws IOException, ClassNotFoundException {
+    processing = true;
+    // Specify mp3 song file name here with beat detection library to use
+    // TODO: Improve this to allow for loading multiple songs
+    if (!RhythmKnight.switcher) {
+      LWBDBeatDetector.readSong1();
+    } else {
+      LWBDBeatDetector.readSong2();
     }
     processed = true;
   }
@@ -90,8 +102,36 @@ public class LoadScreen implements Screen {
   @Override
   public void render(float delta) {
 
+    // processing lwbd
+//    if (!processing && screenTimer > 2f) {
+//      try {
+//        setupLWBD();
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      } catch (ClassNotFoundException e) {
+//        e.printStackTrace();
+//      }
+//
+////      try {
+////        setupTarsos();
+////      } catch (IOException e) {
+////        e.printStackTrace();
+////      } catch (UnsupportedAudioFileException e) {
+////        e.printStackTrace();
+////      }
+//
+//      screenTimer = 0f;
+//    }
+
+    // set up without bd
     if (!processing && screenTimer > 2f) {
-      setupLWBD();
+      try {
+        setupLWBDWBD();
+      } catch (IOException e) {
+        e.printStackTrace();
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
 
 //      try {
 //        setupTarsos();

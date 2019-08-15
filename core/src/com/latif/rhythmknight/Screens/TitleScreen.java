@@ -45,7 +45,7 @@ public class TitleScreen implements Screen {
     gameCam = new OrthographicCamera();
     gamePort = new FitViewport(RhythmKnight.V_WIDTH,
             RhythmKnight.V_HEIGHT, gameCam);
-    stage = new Stage(new FitViewport(RhythmKnight.V_WIDTH, RhythmKnight.V_HEIGHT, new OrthographicCamera()), ((RhythmKnight) game).batch);
+    stage = new Stage(new FitViewport(RhythmKnight.V_WIDTH * 1.8f, RhythmKnight.V_HEIGHT * 1.8f, new OrthographicCamera()), ((RhythmKnight) game).batch);
 
     // create parallax scrolling background
     Array<Texture> textures = new Array<Texture>();
@@ -70,6 +70,7 @@ public class TitleScreen implements Screen {
     table.setFillParent(true);
 
     Label rhythmKnightLabel = new Label("RHYTHM KNIGHT", font);
+    rhythmKnightLabel.setFontScale(4);
     Label pressStart = new Label("Tap To Start", font);
     stage.addActor(table);
 

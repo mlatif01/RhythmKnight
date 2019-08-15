@@ -32,6 +32,7 @@ public class RhythmKnight extends Game {
   public static final String BASIC_DRUM_MP3 = "audio/basicdrum.mp3";
   public static final String BASIC_DRUM = "audio/basicdrum.ogg";
 
+  // use to switch between songs
   public static boolean switcher = false;
 
   /* AssetManager will be used in a static context to save time */

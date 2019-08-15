@@ -63,6 +63,7 @@ public class RKnight extends Sprite {
   public World world;
   // Box2d Body
   public Body b2body;
+  public Body swordBody;
   // get individual texture for RK idle
   private TextureRegion rKnightIdleTextureRegion;
   // padding for positioning of body sprite
@@ -134,13 +135,28 @@ public class RKnight extends Sprite {
   }
 
   public void defineRKnight() {
-    // define body of sprite
+    // define body
     BodyDef bdef = new BodyDef();
     bdef.position.set(120 / RhythmKnight.PPM, 150 / RhythmKnight.PPM);
     bdef.type = BodyDef.BodyType.DynamicBody;
     b2body = world.createBody(bdef);
 
-    // define fixture of sprite
+    // define sword body
+//    BodyDef bdef2 = new BodyDef();
+//    bdef2.position.set(180 / RhythmKnight.PPM, 180 / RhythmKnight.PPM);
+//    bdef2.type = BodyDef.BodyType.DynamicBody;
+//    swordBody = world.createBody(bdef2);
+
+    // define revolutejoint
+//    RevoluteJointDef rDef = new RevoluteJointDef();
+//    rDef.bodyA = b2body;
+//    rDef.bodyB = swordBody;
+//    rDef.collideConnected = true;
+//    rDef.localAnchorA.set(0, 5/RhythmKnight.PPM);
+//    rDef.localAnchorB.set(-10 / RhythmKnight.PPM, 0);
+//    world.createJoint(rDef);
+
+    // define fixture for RK
     FixtureDef fdef = new FixtureDef();
     PolygonShape shape = new PolygonShape();
     shape.setAsBox(6 / RhythmKnight.PPM, 24 / RhythmKnight.PPM);
@@ -148,13 +164,23 @@ public class RKnight extends Sprite {
     // set what RKnight can collide with
     fdef.filter.maskBits = RhythmKnight.GROUND_BIT | RhythmKnight.STONE_BIT | RhythmKnight.OBJECT_BIT |
             RhythmKnight.GOBLING_BIT | RhythmKnight.GOBLING_HEAD_BIT;
-    // create fixture of sprite
+    // create fixture
     fdef.shape = shape;
     b2body.createFixture(fdef).setUserData("rknight");
 
+    // define fixture for sword
+//    shape = new PolygonShape();
+//    shape.setAsBox(12 / RhythmKnight.PPM, 3 / RhythmKnight.PPM);
+////    fdef.filter.categoryBits = RhythmKnight.SWORD_BIT;
+//    fdef.filter.maskBits = RhythmKnight.STONE_BIT | RhythmKnight.OBJECT_BIT |
+//            RhythmKnight.GOBLING_BIT | RhythmKnight.GOBLING_HEAD_BIT;
+//    fdef.shape = shape;
+//    swordBody.createFixture(fdef).setUserData("sword");
+
+
     // define and create fixture for sword
     EdgeShape sword = new EdgeShape();
-    sword.set(new Vector2(25 / RhythmKnight.PPM, 20 / RhythmKnight.PPM), new Vector2(5 / RhythmKnight.PPM, 1 / RhythmKnight.PPM));
+    sword.set(new Vector2(12f / RhythmKnight.PPM, 10 / RhythmKnight.PPM), new Vector2(-10 / RhythmKnight.PPM, -20 / RhythmKnight.PPM));
     fdef.isSensor = true;
     fdef.filter.categoryBits = RhythmKnight.SWORD_BIT;
     // set what sword can collide with
@@ -191,6 +217,7 @@ public class RKnight extends Sprite {
     if (currentState != State.JUMPING) {
       isAttacking = true;
       canMove = false;
+      // fix for detecting slash
       b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
       b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
       RhythmKnight.manager.get("audio/sounds/swordsound.wav", Music.class).play();
@@ -305,7 +332,7 @@ public class RKnight extends Sprite {
     }
     // logic for performing full set of attack frames
     else if (isAttacking) {
-      attackCounter += 0.1;
+      attackCounter += 0.15;
       if (attackCounter > rKnightAttack.getAnimationDuration() + attackAniOffset) {
         attackCounter = 0.0f;
         isAttacking = false;
@@ -314,20 +341,21 @@ public class RKnight extends Sprite {
       }
 
       // flip attack state to the next slash animation
+      float attackEnd = 1.5f;
       if (!isAttacking) {
         if (nextAttackState == AttackState.ATTACK1) {
-          if (attackDelta < 1.5f) {
+          if (attackDelta < attackEnd) {
 //            System.out.println("ATTACK DELTA: " + attackDelta);
             nextAttackState = AttackState.ATTACK2;
-          } else if (attackDelta > 1.5f) {
+          } else if (attackDelta > attackEnd) {
 //            System.out.println("ATTACK DELTA: " + attackDelta);
             nextAttackState = AttackState.ATTACK1;
           }
         } else if (nextAttackState == AttackState.ATTACK2) {
-          if (attackDelta < 1.5f) {
+          if (attackDelta < attackEnd) {
 //            System.out.println("ATTACK DELTA: " + attackDelta);
             nextAttackState = AttackState.ATTACK3;
-          } else if (attackDelta > 1.5f) {
+          } else if (attackDelta > attackEnd) {
 //            System.out.println("ATTACK DELTA: " + attackDelta);
             nextAttackState = AttackState.ATTACK1;
           }
@@ -433,7 +461,7 @@ public class RKnight extends Sprite {
 
     // set up attack3 animation frames
     // padding for slash animation
-    xpad = 7;
+    xpad = 5;
     frames.add(new TextureRegion(getTexture(), 261, 40, 40, 37));
     frames.add(new TextureRegion(getTexture(), 313, 79, 40, 37));
     frames.add(new TextureRegion(getTexture(), 313 + xpad, 40, 44, 37));

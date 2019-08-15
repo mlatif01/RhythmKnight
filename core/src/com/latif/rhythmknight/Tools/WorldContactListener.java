@@ -100,6 +100,13 @@ public class WorldContactListener implements ContactListener {
         if (fixB.getFilterData().categoryBits == RhythmKnight.GOBLING_BIT) {
           fixB.getBody().setLinearVelocity(0f, 0f);
         }
+      case RhythmKnight
+              .GOBLING_HEAD_BIT | RhythmKnight.RKNIGHT_BIT:
+        // when gobling touches player, player will not move
+        if (fixB.getFilterData().categoryBits == RhythmKnight.GOBLING_HEAD_BIT) {
+          fixB.getBody().setLinearVelocity(0f, 0f);
+        }
+
         break;
     }
   }

@@ -2,10 +2,20 @@ package com.latif.rhythmknight.Tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.latif.rhythmknight.RhythmKnight;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -21,7 +31,7 @@ public class LWBDBeatDetector {
 
   public static ArrayList<Float> beatList;
 
-  public LWBDBeatDetector(String fileName) {
+  public LWBDBeatDetector(String fileName) throws IOException, ClassNotFoundException {
 
     beatList = new ArrayList<Float>();
 
@@ -65,10 +75,52 @@ public class LWBDBeatDetector {
       beatList.add(b.timeMs / 1000.f);
     }
     System.out.println("SIZE OF LIST: " + beatList.size());
+
   }
 
   public static ArrayList<Float> getBeatListCopy() {
     return (ArrayList<Float>) beatList.clone();
+  }
+
+  public static void write() throws IOException {
+//    FileOutputStream fos = new FileOutputStream("beatlist.txt");
+//    ObjectOutputStream oos = new ObjectOutputStream(fos);
+//    oos.writeObject(beatList);
+//    oos.close();
+    Json json = new Json();
+    json.addClassTag("String", String.class); // This may not be needed. I don't know how json deals with String
+    String beats = json.toJson(beatList);
+    FileHandle file = Gdx.files.local("beats2.json");
+    file.writeString(beats, false);
+    System.out.println("WRITTEN TO TEXT FILE");
+  }
+
+  public static void readSong1() throws IOException, ClassNotFoundException {
+
+    FileHandle file = Gdx.files.internal("beats.json");
+    JsonValue json = new JsonReader().parse(file);
+    JsonValue.JsonIterator it = json.iterator();
+    beatList = new ArrayList<Float>();
+
+    int count = 0;
+    while (it.hasNext() && count < 100) {
+      beatList.add(it.next().getFloat("value"));
+      count++;
+    }
+  }
+
+  public static void readSong2() throws IOException, ClassNotFoundException {
+
+    FileHandle file = Gdx.files.internal("beats2.json");
+    JsonValue json = new JsonReader().parse(file);
+    JsonValue.JsonIterator it = json.iterator();
+    beatList = new ArrayList<Float>();
+
+    int count = 0;
+    while (it.hasNext() && count < 100) {
+      beatList.add(it.next().getFloat("value"));
+      count++;
+    }
   }
 
 }

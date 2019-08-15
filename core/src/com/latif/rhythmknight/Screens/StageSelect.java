@@ -111,19 +111,23 @@ public class StageSelect implements Screen {
     table.addActor(btnLevel1_3);
 
 
-    Label playLabel = new Label("Stage Select", font);
+    Label playLabel = new Label("STAGE SELECT", font);
     table.add(playLabel).expandX();
     table.row();
-    Label statsLabel = new Label("RK Stats", font);
+    Label statsLabel = new Label("RK STATS", font);
+    statsLabel.setFontScale(0.8f);
     table.add(statsLabel).padRight(300f);
     table.row();
     Label hpLabel = new Label("HP: " + 30, font);
+    hpLabel.setFontScale(0.7f);
     table.add(hpLabel).padRight(300f);
     table.row();
     Label lvlUpLabel = new Label("LVL UP: " + RKnight.getExpToNextLevel(), font);
+    lvlUpLabel.setFontScale(0.7f);
     table.add(lvlUpLabel).padRight(300f);
     table.row();
     Label currentLvl = new Label("LVL: " + RKnight.getCurrentLvl(), font);
+    currentLvl.setFontScale(0.7f);
     table.add(currentLvl).padBottom(80f).padRight(300f);
 
     // add actors to table
