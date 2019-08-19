@@ -37,8 +37,11 @@ public class LoadScreen implements Screen {
   private LWBDBeatDetector lwbd;
   private TarsosPitchDetector tarsos;
 
-  public LoadScreen(Game game) {
+  private int level;
+
+  public LoadScreen(Game game, int level) {
     this.game = game;
+    this.level = level;
 
     processed = false;
     processing = false;
@@ -67,10 +70,12 @@ public class LoadScreen implements Screen {
     processing = true;
     // Specify mp3 song file name here with beat detection library to use
     // TODO: Improve this to allow for loading multiple songs
-    if (!RhythmKnight.switcher) {
-      lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_MP3);
-    } else {
-      lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_ALTERNATE_MP3);
+    if (level == 1) {
+      lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_MP3, level);
+    } else if (level == 2){
+      lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_ALTERNATE_MP3, level);
+    } else if (level == 3) {
+      lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_THREE_MP3, level);
     }
     processed = true;
   }
@@ -79,10 +84,12 @@ public class LoadScreen implements Screen {
     processing = true;
     // Specify mp3 song file name here with beat detection library to use
     // TODO: Improve this to allow for loading multiple songs
-    if (!RhythmKnight.switcher) {
+    if (level == 1) {
       LWBDBeatDetector.readSong1();
-    } else {
+    } else if (level == 2){
       LWBDBeatDetector.readSong2();
+    } else if (level == 3) {
+      LWBDBeatDetector.readSong3();
     }
     processed = true;
   }
@@ -123,7 +130,7 @@ public class LoadScreen implements Screen {
 //      screenTimer = 0f;
 //    }
 
-    // set up without bd
+    // set up with json
     if (!processing && screenTimer > 2f) {
       try {
         setupLWBDWBD();
@@ -148,9 +155,19 @@ public class LoadScreen implements Screen {
 
     // when audio is processed start game
     if (processed && screenTimer > 2f) {
-      game.setScreen(new PlayScreen((RhythmKnight) game));
-      dispose();
+      if (level == 1) {
+        game.setScreen(new PlayScreen((RhythmKnight) game));
+        dispose();
+      }
+      else if (level == 2) {
+        game.setScreen(new PlayScreen_2((RhythmKnight) game));
+        dispose();
+      } else if (level == 3) {
+        game.setScreen(new PlayScreen_3((RhythmKnight) game));
+        dispose();
+      }
     }
+
     Gdx.gl.glClearColor(0, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     stage.draw();

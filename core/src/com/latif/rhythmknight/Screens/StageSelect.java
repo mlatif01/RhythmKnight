@@ -52,6 +52,10 @@ public class StageSelect implements Screen {
   private static boolean useBackground1 = true;
   private String texturePath;
 
+  private boolean level_1;
+  private boolean level_2;
+  private boolean level_3;
+
   public StageSelect(Game game) {
     this.game = game;
 
@@ -141,6 +145,29 @@ public class StageSelect implements Screen {
       public boolean handle(Event event) {
         if (Gdx.input.isTouched()) {
           changeScreen = true;
+          level_1 = true;
+        }
+        return false;
+      }
+    });
+
+    btnLevel1_2.addListener(new EventListener() {
+      @Override
+      public boolean handle(Event event) {
+        if (Gdx.input.isTouched()) {
+          level_2 = true;
+          changeScreen = true;
+        }
+        return false;
+      }
+    });
+
+    btnLevel1_3.addListener(new EventListener() {
+      @Override
+      public boolean handle(Event event) {
+        if (Gdx.input.isTouched()) {
+          level_3 = true;
+          changeScreen = true;
         }
         return false;
       }
@@ -168,7 +195,15 @@ public class StageSelect implements Screen {
     // change screen when user taps on button
     if (changeScreen) {
       RhythmKnight.manager.get("audio/sounds/gamerestart.wav", Sound.class).play();
-      game.setScreen(new LoadScreen((RhythmKnight) game));
+      if (level_1) {
+        game.setScreen(new LoadScreen((RhythmKnight) game, 1));
+      }
+      else if (level_2) {
+        game.setScreen(new LoadScreen((RhythmKnight) game, 2));
+      }
+      else if (level_3) {
+        game.setScreen(new LoadScreen((RhythmKnight) game, 3));
+      }
     }
 
   }

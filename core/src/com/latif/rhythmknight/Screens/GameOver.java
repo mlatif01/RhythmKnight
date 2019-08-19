@@ -24,7 +24,7 @@ public class GameOver implements Screen {
 
   private Game game;
 
-  public GameOver(Game game) {
+  public GameOver(Game game, int finalScore) {
     this.game = game;
     viewport = new FitViewport(RhythmKnight.V_WIDTH, RhythmKnight.V_HEIGHT,
             new OrthographicCamera());
@@ -40,6 +40,7 @@ public class GameOver implements Screen {
     Label playAgainLabel = new Label("Tap to Play Again", font);
     Label StageOverLabel = new Label("STAGE OVER", font);
     Label WinLabel = new Label("Stage Completed! - Tap for Next Stage", font);
+    Label finalScoreLabel = new Label("Final Score: " + finalScore, font);
 
     stage.addActor(table);
 
@@ -49,6 +50,9 @@ public class GameOver implements Screen {
       table.add(StageOverLabel).expandX();
       table.row();
       table.add(WinLabel).expandX().padTop(10f);
+      table.row();
+      table.row();
+      table.add(finalScoreLabel);
       RhythmKnight.manager.get("audio/music/gamewin2.wav", Music.class).play();
       RKnight.incrementExp(50);
     }
@@ -57,6 +61,9 @@ public class GameOver implements Screen {
       table.add(gameOverLabel).expandX();
       table.row();
       table.add(playAgainLabel).expandX().padTop(10f);
+      table.row();
+      table.row();
+      table.add(finalScoreLabel);
       RhythmKnight.manager.get("audio/music/gameover2.wav", Music.class).play();
     }
   }

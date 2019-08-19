@@ -2,8 +2,6 @@ package com.latif.rhythmknight.Screens;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -31,15 +29,15 @@ import com.latif.rhythmknight.Tools.WorldContactListener;
 
 import java.util.ArrayList;
 
-public class PlayScreen implements Screen {
+public class PlayScreen_2 extends PlayScreen implements Screen {
 
   // beat lists for BEAT DETECTION
   private ArrayList<Float> lwbdBeatList;
   private ArrayList<Float> tarsosPitchList;
 
   // boolean variables for choosing between stages
-  private boolean isStage_1 = true;
-  private boolean isStage_2 = false;
+  private boolean isStage_1 = false;
+  private boolean isStage_2 = true;
 
   // reference to the game, used to set screens
   private RhythmKnight game;
@@ -103,7 +101,7 @@ public class PlayScreen implements Screen {
   private CutSceneController cutSceneController;
 
   // Constructor for initialising the playscreen - as we need to send the game to the screen
-  public PlayScreen(RhythmKnight game) {
+  public PlayScreen_2(RhythmKnight game) {
 
     // setup debug logger
     Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -145,11 +143,11 @@ public class PlayScreen implements Screen {
     b2dr = new Box2DDebugRenderer();
 
     // create entity objects in our game world for the active PlayScreen
-    player = new RKnight(this,120 / RhythmKnight.PPM, 150 / RhythmKnight.PPM);
+    player = new RKnight(this, 80 / RhythmKnight.PPM, 150 / RhythmKnight.PPM);
 
     // create game HUD for scores/hp/level
     // takes in player hp as argument for the hud display
-    hud = new Hud(game.batch, 1, 1);
+    hud = new Hud(game.batch, 1, 2);
 
     // identifying collision objects
     world.setContactListener(new WorldContactListener());
@@ -186,8 +184,7 @@ public class PlayScreen implements Screen {
 //      song = RhythmKnight.STAGE_ONE_ALTERNATE_MUSIC;
 //      RhythmKnight.switcher = false;
 //    }
-
-    song = RhythmKnight.STAGE_ONE_MUSIC;
+    song = RhythmKnight.STAGE_ONE_ALTERNATE_MUSIC;
 
     music = RhythmKnight.manager.get(song, Music.class);
     music.setVolume(0.7f);
@@ -199,9 +196,6 @@ public class PlayScreen implements Screen {
     // BEAT DETECTION LISTS INSTANTIATION
     lwbdBeatList = LWBDBeatDetector.getBeatListCopy();
 //    tarsosPitchList = TarsosPitchDetector.getPitchListCopy();
-  }
-
-  public PlayScreen() {
   }
 
 
@@ -268,22 +262,24 @@ public class PlayScreen implements Screen {
   public void update(float deltaTime) {
 
     // play cutscene at beginning of game
-    if (!cutSceneController.isCameraPositioned() && isStage_1) {
-      cutSceneController.animateStartCutscene(deltaTime);
-    } else if (cutSceneController.isCameraPositioned()) {
-      player.setReadyToBattle(true);
-    }
+//    if (!cutSceneController.isCameraPositioned() && isStage_1) {
+//      cutSceneController.animateStartCutscene(deltaTime);
+//    } else if (cutSceneController.isCameraPositioned()) {
+//      player.setReadyToBattle(true);
+//    }
+    cutSceneController.setCameraPositioned(true);
+
+    player.setReadyToBattle(true);
 
     // focus camera on player
-    // TODO: isStage_1, Improve logic
-    if (cutSceneController.isCameraPositioned() && gameCam.zoom > 0.7 && isStage_1) {
-      gameCam.zoom -= 0.003;
-      gameCam.position.y -= 0.003;
-      gameCam.position.x -= 0.005;
+    if (cutSceneController.isCameraPositioned() && gameCam.zoom > 0.6) {
+      gameCam.zoom -= 0.01;
+      gameCam.position.y -= 0.000;
+      gameCam.position.x -= 0.008;
     }
 
     // focus camera away from player and perform end cutscene
-    if (enemiesKilled == enemiesToKill && isStage_1) {
+    if (enemiesKilled == enemiesToKill) {
 //      player.readyToBattle = false;
       gameEndTimer += deltaTime;
       if (gameEndTimer > 1f) {
@@ -434,7 +430,6 @@ public class PlayScreen implements Screen {
 //      RhythmKnight.manager.clear();
       player.setReadyToBattle(false);
       Gobling.resetDeath();
-      // pass in the final score (score - points lost from number of misses)
       game.setScreen(new GameOver(game, (Hud.getScore() - ( player.getTotalNumberOfMisses() * 50) )));
       dispose();
     }
@@ -504,7 +499,6 @@ public class PlayScreen implements Screen {
   public RKnight getPlayer() {
     return player;
   }
-
 
 
 }

@@ -14,17 +14,26 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.latif.rhythmknight.RhythmKnight;
+import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Screens.PlayScreen;
 
 
 public class RKnight extends Sprite {
 
-  private static RKnight player;
-
   private float attackDelta = 0f;
 
   // boolean representing whether rk is dead
   private static boolean RKnightIsDead = false;
+  private int slashAttempts = 0;
+  private int enemiesHit = 0;
+
+  public void incrementEnemiesHit(int i) {
+    enemiesHit += 1;
+  }
+
+  public int getTotalNumberOfMisses() {
+    return slashAttempts - enemiesHit;
+  }
 
   public void setReadyToBattle(boolean isReadyToBattle) {
     readyToBattle = isReadyToBattle;
@@ -98,10 +107,14 @@ public class RKnight extends Sprite {
 
   private TextureAtlas atlas_3;
 
-  public RKnight(PlayScreen screen) {
+  private PlayScreen screen;
+
+  public RKnight(PlayScreen screen, float x, float y) {
 
     // get sprite actions for idle RKnight - initial frame
     super(screen.getAtlas().findRegion("adventurer-idle-00"));
+
+    this.screen = screen;
 
     // set hp
     hp = currentHp;
@@ -124,7 +137,7 @@ public class RKnight extends Sprite {
     this.world = screen.getWorld();
 
     // defineRKnight attributes
-    defineRKnight();
+    defineRKnight(x, y);
 
     // create RKnight idle texture region
     rKnightIdleTextureRegion = new TextureRegion(getTexture(), 419, 19, 37, 37);
@@ -134,10 +147,10 @@ public class RKnight extends Sprite {
     setRegion(rKnightIdleTextureRegion);
   }
 
-  public void defineRKnight() {
+  public void defineRKnight(float x, float y) {
     // define body
     BodyDef bdef = new BodyDef();
-    bdef.position.set(120 / RhythmKnight.PPM, 150 / RhythmKnight.PPM);
+    bdef.position.set(x, y);
     bdef.type = BodyDef.BodyType.DynamicBody;
     b2body = world.createBody(bdef);
 
@@ -214,13 +227,14 @@ public class RKnight extends Sprite {
 
   // handle slash input from user defined in PlayScreen class by setting is attacking to true
   public void handleSlash() {
-    if (currentState != State.JUMPING) {
+    if (currentState != State.JUMPING && readyToBattle) {
       isAttacking = true;
       canMove = false;
       // fix for detecting slash
       b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
       b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
       RhythmKnight.manager.get("audio/sounds/swordsound.wav", Music.class).play();
+      slashAttempts += 1;
     }
   }
 

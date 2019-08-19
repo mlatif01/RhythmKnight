@@ -15,9 +15,16 @@ import com.latif.rhythmknight.Sprites.RKnight;
 
 public class Hud implements Disposable {
 
+  boolean readyToUpdate = false;
+  float timer = 0;
+
+
+  int world;
+  int stage;
+
   // A 2D scene graph containing hierarchies of actors. Stage handles the viewport and distributes
   // input events.
-  public Stage stage;
+  public Stage hud_stage;
 
   // We use a new camera and viewport specifically for the HUD. So that it is locked and only
   // renders that part of the screen.
@@ -37,11 +44,13 @@ public class Hud implements Disposable {
   private Label stageLabel;
   private Label levelLabel;
 
-  public Hud(SpriteBatch sb) {
+  public Hud(SpriteBatch sb, int world, int stage) {
     score = 0;
     hp = RKnight.getHp();
     viewport = new FitViewport(RhythmKnight.V_WIDTH, RhythmKnight.V_HEIGHT, new OrthographicCamera());
-    stage = new Stage(viewport, sb);
+    hud_stage = new Stage(viewport, sb);
+
+
 
     // In order to provide organisation, we create a table in our stage and then we can lay this out
     // to organise them in a certain position in the stage
@@ -62,7 +71,7 @@ public class Hud implements Disposable {
     stageLabel = new Label("STAGE", new Label.LabelStyle(new BitmapFont(),
             Color.WHITE));
     // Change level depending on which stage is selected (NEEDS TO BE ADDED)
-    levelLabel = new Label("1-1", new Label.LabelStyle(new BitmapFont(),
+    levelLabel = new Label(world+"-"+stage, new Label.LabelStyle(new BitmapFont(),
             Color.WHITE));
 
     // add labels to the table
@@ -75,15 +84,16 @@ public class Hud implements Disposable {
     table.add(levelLabel).expandX();
 
     // adds the table to the stage
-    stage.addActor(table);
+    hud_stage.addActor(table);
   }
 
   public static void updateScore(int value) {
     score += value;
-    scoreLabel.setText(String.format("%06d", score));
   }
 
   public void update(float deltaTime) {
+    timer += deltaTime;
+    System.out.println(deltaTime);
     // TODO
     // if rk alive then set hp to current hp value
     if (RKnight.getHp() > 0) {
@@ -94,10 +104,18 @@ public class Hud implements Disposable {
     else if (RKnight.getHp() <= 0) {
       rhythmKnightHpLabel.setText((String.format("%02d", 0)));
     }
+    if (timer > 0.5) {
+      scoreLabel.setText(String.format("%06d", score));
+      timer = 0;
+    }
   }
 
   @Override
   public void dispose() {
-    stage.dispose();
+    hud_stage.dispose();
+  }
+
+  public static int getScore() {
+    return score;
   }
 }

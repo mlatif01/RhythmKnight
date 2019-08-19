@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.latif.rhythmknight.Screens.TitleScreen;
+import com.latif.rhythmknight.Tools.AssetsManager;
 
 public class RhythmKnight extends Game {
 
@@ -31,12 +32,14 @@ public class RhythmKnight extends Game {
   public static final String NIGHT_DISTANCE_MUSIC = "audio/nightdistance.ogg";
   public static final String BASIC_DRUM_MP3 = "audio/basicdrum.mp3";
   public static final String BASIC_DRUM = "audio/basicdrum.ogg";
+  public static final String STAGE_THREE_MP3 = "audio/song3.mp3";
+  public static final String STAGE_THREE_MUSIC = "audio/song3.ogg";
 
   // use to switch between songs
   public static boolean switcher = false;
 
-  /* AssetManager will be used in a static context to save time */
-  public static AssetManager manager;
+  // AssetManager will be used as a singleton
+  public static AssetsManager manager;
 
   //pixels per metre
   public static final float PPM = 100;
@@ -51,36 +54,13 @@ public class RhythmKnight extends Game {
     // initialise batch
     batch = new SpriteBatch();
 
-    // create Asset Manager and load assets
-    manager = new AssetManager();
-    manager.load("audio/music/background.ogg", Music.class);
-    manager.load("audio/music/background2.ogg", Music.class);
-    manager.load("audio/song1.ogg", Music.class);
-    manager.load("audio/song2.ogg", Music.class);
-    manager.load("audio/song0.wav", Music.class);
-    manager.load("audio/sounds/footsteps.wav", Sound.class);
-    manager.load("audio/sounds/swordsound.wav", Music.class);
-    manager.load("audio/sounds/meleesound.wav", Sound.class);
-    manager.load("audio/sounds/breakblock.wav", Sound.class);
-    manager.load("audio/sounds/goblingdie.wav", Sound.class);
-    manager.load("audio/sounds/goblinghit.wav", Sound.class);
-    manager.load("audio/sounds/rkdeath.wav", Sound.class);
-    manager.load("audio/sounds/gamerestart.wav", Sound.class);
-    manager.load("audio/music/gamewin.ogg", Music.class);
-    manager.load("audio/music/gamewin2.wav", Music.class);
-    manager.load("audio/music/gameover.ogg", Music.class);
-    manager.load("audio/music/gameover2.wav", Music.class);
-    manager.load("audio/music/titletheme.wav", Music.class);
-    manager.load("audio/nightdistance.ogg", Music.class);
-    manager.load("audio/basicdrum.ogg", Music.class);
-    manager.load("audio/song1.mp3", Music.class);
-
-
-    // finish loading assets
-    manager.finishLoading();
+    // initialise AssetsManager singleton
+    manager = AssetsManager.getInstance();
+    manager.init();
 
     // pass in this so that the PlayScreen can set screens
     setScreen(new TitleScreen(this));
+
   }
 
   // used to update and render the game elements called 60 times per second

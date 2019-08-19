@@ -23,6 +23,7 @@ public class Gobling extends Enemy {
 
   private boolean setToDestroy;
   private boolean destroyed;
+  private boolean goblingBeingHit = false;
 
   // get individual texture for gobling idle
   private TextureRegion goblingIdleTextureRegion;
@@ -151,11 +152,14 @@ public class Gobling extends Enemy {
   @Override
   public void hitOnHead() {
     if (screen.getPlayer().checkIsAttacking()) {
+      // set flag for gobling being hit
+      goblingBeingHit = true;
       System.out.println(stateTime);
       setToDestroy = true;
-      Hud.updateScore(100);
       screen.incrementEnemiesKilled();
       RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(1f);
+      Hud.updateScore(100);
+      screen.getPlayer().incrementEnemiesHit(1);
     }
   }
 
@@ -165,6 +169,8 @@ public class Gobling extends Enemy {
     setToDestroy = true;
     screen.incrementEnemiesKilled();
     RhythmKnight.manager.get("audio/sounds/goblinghit.wav", Sound.class).play(1f);
+    // reduce score by 50 if hit
+//    Hud.updateScore(-50);
   }
 
 }

@@ -72,6 +72,7 @@ public class TitleScreen implements Screen {
     Label rhythmKnightLabel = new Label("RHYTHM KNIGHT", font);
     rhythmKnightLabel.setFontScale(4);
     Label pressStart = new Label("Tap To Start", font);
+    pressStart.setFontScale(2);
     stage.addActor(table);
 
     table.add(rhythmKnightLabel).expandX();

@@ -42,11 +42,11 @@ public class CutSceneController {
   }
 
 
-  public void animateEndCutscene() {
+  public void animateEndCutscene(float xspeed, float yspeed, float zspeed) {
     screen.getPlayer().b2body.applyLinearImpulse(new Vector2(0.05f, 0f), screen.getPlayer().b2body.getWorldCenter(), true);
-    screen.getGameCam().zoom += 0.0025f;
-    screen.getGameCam().position.y += 0.003f;
-    screen.getGameCam().position.x += 0.005f;
+    screen.getGameCam().zoom += zspeed;
+    screen.getGameCam().position.y += yspeed;
+    screen.getGameCam().position.x += xspeed;
   }
 
 

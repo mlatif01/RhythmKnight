@@ -31,7 +31,7 @@ public class LWBDBeatDetector {
 
   public static ArrayList<Float> beatList;
 
-  public LWBDBeatDetector(String fileName) throws IOException, ClassNotFoundException {
+  public LWBDBeatDetector(String fileName, int level) throws IOException, ClassNotFoundException {
 
     beatList = new ArrayList<Float>();
 
@@ -39,11 +39,13 @@ public class LWBDBeatDetector {
     // improve this impl. Create song manager
     FileHandle song = null;
     try {
-      if (!RhythmKnight.switcher) {
+      if (level == 1) {
         // android\assets\ (Add this when creating jar file)
         song = Gdx.files.internal("audio\\song1.mp3");
-      } else {
+      } else if (level == 2){
         song = Gdx.files.internal("audio\\song2.mp3");
+      } else if (level == 3) {
+        song = Gdx.files.internal("audio\\song3.mp3");
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -74,6 +76,10 @@ public class LWBDBeatDetector {
       System.out.print("\tEnergy: " + b.energy + "\n");
       beatList.add(b.timeMs / 1000.f);
     }
+
+    // method to write beat list values to json
+    write();
+
     System.out.println("SIZE OF LIST: " + beatList.size());
 
   }
@@ -88,9 +94,9 @@ public class LWBDBeatDetector {
 //    oos.writeObject(beatList);
 //    oos.close();
     Json json = new Json();
-    json.addClassTag("String", String.class); // This may not be needed. I don't know how json deals with String
+    json.addClassTag("String", String.class); // This may not be needed. Not sure how json deals with String
     String beats = json.toJson(beatList);
-    FileHandle file = Gdx.files.local("beats2.json");
+    FileHandle file = Gdx.files.local("beats3.json");
     file.writeString(beats, false);
     System.out.println("WRITTEN TO TEXT FILE");
   }
@@ -122,5 +128,20 @@ public class LWBDBeatDetector {
       count++;
     }
   }
+
+  public static void readSong3() throws IOException, ClassNotFoundException {
+
+    FileHandle file = Gdx.files.internal("beats3.json");
+    JsonValue json = new JsonReader().parse(file);
+    JsonValue.JsonIterator it = json.iterator();
+    beatList = new ArrayList<Float>();
+
+    int count = 0;
+    while (it.hasNext() && count < 100) {
+      beatList.add(it.next().getFloat("value"));
+      count++;
+    }
+  }
+
 
 }

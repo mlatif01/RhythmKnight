@@ -39,12 +39,4 @@
  <objectgroup id="4" name="enemy">
   <object id="209" x="584.667" y="170"/>
  </objectgroup>
- <objectgroup id="24" name="stone">
-  <object id="42" x="368.667" y="159.333" width="16" height="16"/>
- </objectgroup>
- <layer id="28" name="stone graphic" width="44" height="13">
-  <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSgY3gAACPAAAQ==
-  </data>
- </layer>
 </map>
