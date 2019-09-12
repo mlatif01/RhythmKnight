@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
-import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.RKnight;
 
 public class GameOver implements Screen {

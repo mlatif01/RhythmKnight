@@ -14,7 +14,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.latif.rhythmknight.RhythmKnight;
-import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Screens.PlayScreen;
 
 
@@ -154,21 +153,6 @@ public class RKnight extends Sprite {
     bdef.type = BodyDef.BodyType.DynamicBody;
     b2body = world.createBody(bdef);
 
-    // define sword body
-//    BodyDef bdef2 = new BodyDef();
-//    bdef2.position.set(180 / RhythmKnight.PPM, 180 / RhythmKnight.PPM);
-//    bdef2.type = BodyDef.BodyType.DynamicBody;
-//    swordBody = world.createBody(bdef2);
-
-    // define revolutejoint
-//    RevoluteJointDef rDef = new RevoluteJointDef();
-//    rDef.bodyA = b2body;
-//    rDef.bodyB = swordBody;
-//    rDef.collideConnected = true;
-//    rDef.localAnchorA.set(0, 5/RhythmKnight.PPM);
-//    rDef.localAnchorB.set(-10 / RhythmKnight.PPM, 0);
-//    world.createJoint(rDef);
-
     // define fixture for RK
     FixtureDef fdef = new FixtureDef();
     PolygonShape shape = new PolygonShape();
@@ -180,16 +164,6 @@ public class RKnight extends Sprite {
     // create fixture
     fdef.shape = shape;
     b2body.createFixture(fdef).setUserData("rknight");
-
-    // define fixture for sword
-//    shape = new PolygonShape();
-//    shape.setAsBox(12 / RhythmKnight.PPM, 3 / RhythmKnight.PPM);
-////    fdef.filter.categoryBits = RhythmKnight.SWORD_BIT;
-//    fdef.filter.maskBits = RhythmKnight.STONE_BIT | RhythmKnight.OBJECT_BIT |
-//            RhythmKnight.GOBLING_BIT | RhythmKnight.GOBLING_HEAD_BIT;
-//    fdef.shape = shape;
-//    swordBody.createFixture(fdef).setUserData("sword");
-
 
     // define and create fixture for sword
     EdgeShape sword = new EdgeShape();
@@ -225,53 +199,20 @@ public class RKnight extends Sprite {
     setRegion(getFrame(deltaTime));
   }
 
-  // handle slash input from user defined in PlayScreen class by setting is attacking to true
+
   public void handleSlash() {
+    // if player is not in the air and they are set as ready to battle, handle slash animation
     if (currentState != State.JUMPING && readyToBattle) {
+      // handle slash input from user defined in PlayScreen class by setting is attacking to true
       isAttacking = true;
       canMove = false;
-      // fix for detecting slash
+      // used to wake up the player's sword fixture sensor
       b2body.applyLinearImpulse(new Vector2(-0.1f, 0), b2body.getWorldCenter(), true);
       b2body.applyLinearImpulse(new Vector2(0.1f, 0), b2body.getWorldCenter(), true);
+      // play sword attack sound effect
       RhythmKnight.manager.get("audio/sounds/swordsound.wav", Music.class).play();
       slashAttempts += 1;
     }
-  }
-
-  public boolean checkIsAttacking() {
-    return isAttacking;
-  }
-
-  public static boolean isDead() {
-    return RKnightIsDead;
-  }
-
-  public float getStateTimer() {
-    return stateTimer;
-  }
-
-  public static Integer getHp() {
-    return hp;
-  }
-
-  public void reduceHp() {
-    hp -= 10;
-  }
-
-  public static void setHp(int i) {
-    hp = i;
-  }
-
-  public static void incrementExp(int n) {
-    exp += n;
-  }
-
-  public static int getExpToNextLevel() {
-    return expToNextLevel - exp;
-  }
-
-  public static int getCurrentLvl() {
-    return currentLevel;
   }
 
   private TextureRegion getFrame(float deltaTime) {
@@ -315,28 +256,13 @@ public class RKnight extends Sprite {
         }
         break;
     }
-
-    // if not running right, flip x axis to look left
-    if ((b2body.getLinearVelocity().x < 0 || !runningRight) && !region.isFlipX()) {
-      region.flip(true, false);
-      runningRight = false;
-    }
-
-    // if running right, flip x axis to look right
-    if ((b2body.getLinearVelocity().x > 0 || runningRight) && region.isFlipX()) {
-      region.flip(true, false);
-      runningRight = true;
-    }
-
     // if it doesn't equal previous state we must've reset to a new state so we reset the timer
     stateTimer = currentState == previousState ? stateTimer + deltaTime : 2;
     previousState = currentState;
     return region;
-
   }
 
   private State getState() {
-
     // first check if player has hp
     if (hp <= 0) {
       setToDestroy = true;
@@ -344,6 +270,7 @@ public class RKnight extends Sprite {
     } else if (b2body.getLinearVelocity().y > 0 || (b2body.getLinearVelocity().y < 0 && previousState == State.JUMPING)) {
       return State.JUMPING;
     }
+
     // logic for performing full set of attack frames
     else if (isAttacking) {
       attackCounter += 0.15;
@@ -394,12 +321,7 @@ public class RKnight extends Sprite {
       return State.FALLING;
     } else if (b2body.getLinearVelocity().x != 0) {
       return State.RUNNING;
-    }
-//    else if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
-//      return State.DRAWING_SWORD;
-//    }
-
-    else {
+    } else {
       return State.IDLE_UNSHEATHED;
     }
 
@@ -495,6 +417,42 @@ public class RKnight extends Sprite {
     frames.add(new TextureRegion(atlas_3.getTextures().first(), 417, 196, 37, 37));
     rKnightDead = new Animation<TextureRegion>(0.1f, frames);
     frames.clear();
+  }
+
+  public boolean checkIsAttacking() {
+    return isAttacking;
+  }
+
+  public static boolean isDead() {
+    return RKnightIsDead;
+  }
+
+  public float getStateTimer() {
+    return stateTimer;
+  }
+
+  public static Integer getHp() {
+    return hp;
+  }
+
+  public void reduceHp() {
+    hp -= 10;
+  }
+
+  public static void setHp(int i) {
+    hp = i;
+  }
+
+  public static void incrementExp(int n) {
+    exp += n;
+  }
+
+  public static int getExpToNextLevel() {
+    return expToNextLevel - exp;
+  }
+
+  public static int getCurrentLvl() {
+    return currentLevel;
   }
 
 }

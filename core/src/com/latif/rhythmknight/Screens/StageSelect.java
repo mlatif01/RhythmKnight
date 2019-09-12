@@ -25,12 +25,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Sprites.RKnight;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
-import featherdev.lwbd.decoders.JLayerMp3Decoder;
-import featherdev.lwbd.decoders.LwbdDecoder;
-
 public class StageSelect implements Screen {
 
   private Viewport viewport;
@@ -83,19 +77,18 @@ public class StageSelect implements Screen {
     if (useBackground1) {
       texturePath = "country-platform-back.png";
       useBackground1 = false;
-    }
-    else if (!useBackground1) {
+    } else if (!useBackground1) {
       texturePath = "pixel_background.png";
       useBackground1 = true;
     }
 
     // set background
     table.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(texturePath))));
+
+    // create buttons
     ImageButton btnLevel1_1 = new ImageButton(
             new TextureRegionDrawable(
                     new TextureRegion(txtrLevel1_1)));
-
-    // create buttons
     btnLevel1_1.setPosition(50.f, 10.f, Align.bottomLeft);
     btnLevel1_1.setSize(80, 80);
     table.addActor(btnLevel1_1);
@@ -147,7 +140,7 @@ public class StageSelect implements Screen {
           changeScreen = true;
           level_1 = true;
         }
-        return false;
+        return true;
       }
     });
 
@@ -158,7 +151,7 @@ public class StageSelect implements Screen {
           level_2 = true;
           changeScreen = true;
         }
-        return false;
+        return true;
       }
     });
 
@@ -169,7 +162,7 @@ public class StageSelect implements Screen {
           level_3 = true;
           changeScreen = true;
         }
-        return false;
+        return true;
       }
     });
 
@@ -197,11 +190,9 @@ public class StageSelect implements Screen {
       RhythmKnight.manager.get("audio/sounds/gamerestart.wav", Sound.class).play();
       if (level_1) {
         game.setScreen(new LoadScreen((RhythmKnight) game, 1));
-      }
-      else if (level_2) {
+      } else if (level_2) {
         game.setScreen(new LoadScreen((RhythmKnight) game, 2));
-      }
-      else if (level_3) {
+      } else if (level_3) {
         game.setScreen(new LoadScreen((RhythmKnight) game, 3));
       }
     }

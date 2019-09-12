@@ -27,8 +27,8 @@ public class B2WorldCreator {
     this.screen = screen;
     world = screen.getWorld();
     map = screen.getMap();
-    // Adding bodies and fixtures to the game world (This will need to be put in separate classes)
-    // A definition of what the body, fixtures consists of
+    // Adding bodies and fixtures to the game world
+    // A definition of what the bodies and fixtures consists of
     BodyDef bdef = new BodyDef();
     PolygonShape shape = new PolygonShape();
     FixtureDef fdef = new FixtureDef();
@@ -48,20 +48,12 @@ public class B2WorldCreator {
       body.createFixture(fdef);
     }
 
-    // create stone bodies/ fixtures
-//        for (MapObject object : map.getLayers().get(7).getObjects().getByType(RectangleMapObject.class)) {
-//          Rectangle rect = ((RectangleMapObject) object).getRectangle();
-//
-//          new Stone(screen, object);
-//        }
-
     // create gobling bodies/fixtures
     goblings = new Array<Gobling>();
     goblingRects = new Array<Rectangle>();
 
     for (MapObject object : map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
       Rectangle rect = ((RectangleMapObject) object).getRectangle();
-//      goblings.add(new Gobling(screen, rect.getX() / RhythmKnight.PPM, rect.getY() / RhythmKnight.PPM));
       goblingRects.add(rect);
     }
   }
@@ -72,10 +64,6 @@ public class B2WorldCreator {
 
   public Array<Gobling> getGoblings() {
     return goblings;
-  }
-
-  public Array<Rectangle> getGoblingRects() {
-    return goblingRects;
   }
 
 }

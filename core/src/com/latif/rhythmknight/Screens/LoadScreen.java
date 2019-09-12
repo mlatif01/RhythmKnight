@@ -66,13 +66,14 @@ public class LoadScreen implements Screen {
     table.add(loadingLabel);
   }
 
-  public void setupLWBD() throws IOException, ClassNotFoundException {
+  // previous method for setting up LWBD
+  public void setupLWB() throws IOException, ClassNotFoundException {
     processing = true;
     // Specify mp3 song file name here with beat detection library to use
     // TODO: Improve this to allow for loading multiple songs
     if (level == 1) {
       lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_MP3, level);
-    } else if (level == 2){
+    } else if (level == 2) {
       lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_ONE_ALTERNATE_MP3, level);
     } else if (level == 3) {
       lwbd = new LWBDBeatDetector(RhythmKnight.STAGE_THREE_MP3, level);
@@ -80,20 +81,14 @@ public class LoadScreen implements Screen {
     processed = true;
   }
 
-  public void setupLWBDWBD() throws IOException, ClassNotFoundException {
+  // Current method for setting up LWBD
+  public void setupLWBD() throws IOException, ClassNotFoundException {
     processing = true;
-    // Specify mp3 song file name here with beat detection library to use
-    // TODO: Improve this to allow for loading multiple songs
-    if (level == 1) {
-      LWBDBeatDetector.readSong1();
-    } else if (level == 2){
-      LWBDBeatDetector.readSong2();
-    } else if (level == 3) {
-      LWBDBeatDetector.readSong3();
-    }
+    LWBDBeatDetector.readSong(level);
     processed = true;
   }
 
+  // Method for using Tarsos
   public void setupTarsos() throws IOException, UnsupportedAudioFileException {
     processing = true;
     // Specify song file name here with beat detection library to use
@@ -109,6 +104,9 @@ public class LoadScreen implements Screen {
   @Override
   public void render(float delta) {
 
+    /*
+    May need to use this if we revert back to the previous method
+     */
     // processing lwbd
 //    if (!processing && screenTimer > 2f) {
 //      try {
@@ -130,36 +128,27 @@ public class LoadScreen implements Screen {
 //      screenTimer = 0f;
 //    }
 
-    // set up with json
+    // set up lwbd with json
     if (!processing && screenTimer > 2f) {
       try {
-        setupLWBDWBD();
+        setupLWBD();
       } catch (IOException e) {
         e.printStackTrace();
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       }
 
-//      try {
-//        setupTarsos();
-//      } catch (IOException e) {
-//        e.printStackTrace();
-//      } catch (UnsupportedAudioFileException e) {
-//        e.printStackTrace();
-//      }
-
       screenTimer = 0f;
     }
 
     screenTimer += delta;
 
-    // when audio is processed start game
+    // when audio is processed set the screen
     if (processed && screenTimer > 2f) {
       if (level == 1) {
         game.setScreen(new PlayScreen((RhythmKnight) game));
         dispose();
-      }
-      else if (level == 2) {
+      } else if (level == 2) {
         game.setScreen(new PlayScreen_2((RhythmKnight) game));
         dispose();
       } else if (level == 3) {

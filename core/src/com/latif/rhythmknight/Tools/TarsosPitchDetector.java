@@ -20,7 +20,7 @@ public class TarsosPitchDetector {
 
   public TarsosPitchDetector() throws IOException, UnsupportedAudioFileException {
     AudioDispatcher dispatcher;
-    String fileName = "audio/song0.wav";
+    String fileName = "audio/song1.wav";
     File audioFile = new File(fileName);
     AudioFormat format = null;
 
@@ -29,13 +29,13 @@ public class TarsosPitchDetector {
       public void handlePitch(PitchDetectionResult pitchDetectionResult,
                               AudioEvent audioEvent) {
         if (pitchDetectionResult.getPitch() > 180f) {
-          pitchList.add((float)audioEvent.getTimeStamp());
+          pitchList.add((float) audioEvent.getTimeStamp());
         }
         System.out.println(audioEvent.getTimeStamp() + " " + pitchDetectionResult.getPitch());
       }
     };
 
-    dispatcher = AudioDispatcherFactory.fromFile(audioFile,2048, 512);
+    dispatcher = AudioDispatcherFactory.fromFile(audioFile, 2048, 512);
     dispatcher.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, 44100, 1024, handler));
     dispatcher.run();
 
@@ -47,3 +47,6 @@ public class TarsosPitchDetector {
   }
 
 }
+
+
+

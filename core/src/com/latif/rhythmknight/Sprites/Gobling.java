@@ -23,7 +23,7 @@ public class Gobling extends Enemy {
 
   private boolean setToDestroy;
   private boolean destroyed;
-  private boolean goblingBeingHit = false;
+  private boolean goblingBeingHit;
 
   // get individual texture for gobling idle
   private TextureRegion goblingIdleTextureRegion;
@@ -47,6 +47,7 @@ public class Gobling extends Enemy {
     defineAnimations();
     stateTime = 0;
     goblingDeath = 0;
+    goblingBeingHit = false;
 
     // create idle texture region
 //    goblingIdleTextureRegion = new TextureRegion(screen.getAtlas_2().getTextures().first(), 443, 1, 25, 25);
@@ -74,14 +75,12 @@ public class Gobling extends Enemy {
       goblingDeath += 1;
       destroyed = true;
       setRegion(goblingDie.getKeyFrame(stateTime, true));
-      Gdx.app.log("Gobling", ""+born);
       stateTime = 0;
     } else if (!destroyed) {
       b2body.setLinearVelocity(velocity);
       setPosition(b2body.getPosition().x - getWidth() / 2, b2body.getPosition().y - getHeight() / 2);
       setRegion(goblingMove.getKeyFrame(stateTime, true));
-    }
-    else {
+    } else {
       setRegion(goblingDie.getKeyFrame(stateTime, false));
     }
   }
@@ -154,7 +153,6 @@ public class Gobling extends Enemy {
     if (screen.getPlayer().checkIsAttacking()) {
       // set flag for gobling being hit
       goblingBeingHit = true;
-      System.out.println(stateTime);
       setToDestroy = true;
       screen.incrementEnemiesKilled();
       RhythmKnight.manager.get("audio/sounds/goblingdie.wav", Sound.class).play(1f);

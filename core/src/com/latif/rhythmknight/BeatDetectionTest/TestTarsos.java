@@ -30,13 +30,13 @@ public class TestTarsos {
       public void handlePitch(PitchDetectionResult pitchDetectionResult,
                               AudioEvent audioEvent) {
         if (pitchDetectionResult.getPitch() > 150) {
-          pitchList.add((float)audioEvent.getTimeStamp());
+          pitchList.add((float) audioEvent.getTimeStamp());
         }
         System.out.println(audioEvent.getTimeStamp() + " " + pitchDetectionResult.getPitch());
       }
     };
 
-    dispatcher = AudioDispatcherFactory.fromFile(audioFile,2048, 512);
+    dispatcher = AudioDispatcherFactory.fromFile(audioFile, 2048, 512);
     dispatcher.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, 44100, 1024, handler));
     dispatcher.run();
 

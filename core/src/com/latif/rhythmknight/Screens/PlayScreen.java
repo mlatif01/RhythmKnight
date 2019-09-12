@@ -2,8 +2,6 @@ package com.latif.rhythmknight.Screens;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,11 +16,13 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.latif.rhythmknight.BeatDetectionTest.BeatDetector;
 import com.latif.rhythmknight.RhythmKnight;
 import com.latif.rhythmknight.Scenes.Hud;
 import com.latif.rhythmknight.Sprites.Enemy;
 import com.latif.rhythmknight.Sprites.Gobling;
 import com.latif.rhythmknight.Sprites.RKnight;
+import com.latif.rhythmknight.Tools.AssetsManager;
 import com.latif.rhythmknight.Tools.B2WorldCreator;
 import com.latif.rhythmknight.Tools.CutSceneController;
 import com.latif.rhythmknight.Tools.InputController;
@@ -49,8 +49,8 @@ public class PlayScreen implements Screen {
   private TextureAtlas atlas_2;
   private TextureAtlas atlas_3;
 
-  // reference to beat detector
-//  private BeatDetector minimBeatDetector;
+  // reference to minim beat detector
+  private BeatDetector minimBeatDetector;
 
   // reference to the Hud
   private Hud hud;
@@ -60,6 +60,9 @@ public class PlayScreen implements Screen {
 
   // music
   private Music music;
+
+  // String used for the song path
+  String song;
 
   // number of enemies spawned in the game
   private int enemiesSpawned;
@@ -87,7 +90,6 @@ public class PlayScreen implements Screen {
   // Manages a Camera and determines how world coordinates are mapped to and from the screen
   private Viewport gamePort;
 
-  // TODO
   // state timer for play screen
   private int beatCount = 0;
   private float deltaSpawnToPlayer;
@@ -145,7 +147,7 @@ public class PlayScreen implements Screen {
     b2dr = new Box2DDebugRenderer();
 
     // create entity objects in our game world for the active PlayScreen
-    player = new RKnight(this,120 / RhythmKnight.PPM, 150 / RhythmKnight.PPM);
+    player = new RKnight(this, 120 / RhythmKnight.PPM, 150 / RhythmKnight.PPM);
 
     // create game HUD for scores/hp/level
     // takes in player hp as argument for the hud display
@@ -160,11 +162,9 @@ public class PlayScreen implements Screen {
     // call this timer when gameEnds
     gameEndTimer = 0f;
 
-    // TODO: Confirm if this needs to be used
     // delta between spawned and player
     deltaFromSpawnedToPlayer = 0f;
 
-    // TODO: Confirm if this needds to be used
     // we use this to create enemy before beat is detected to synchronise with slash
     // current distance in time between spawned and player
     deltaSpawnToPlayer = 2.1f;
@@ -177,8 +177,7 @@ public class PlayScreen implements Screen {
     // controls cut scene events
     cutSceneController = new CutSceneController(this);
 
-    String song;
-    // set up music for the current Screen - LWBD METHOD - specify ogg file
+    // (old method) - set up music for the current Screen - LWBD METHOD - specify ogg file
 //    if (!RhythmKnight.switcher) {
 //      song = RhythmKnight.STAGE_ONE_MUSIC;
 //      RhythmKnight.switcher = true;
@@ -188,6 +187,8 @@ public class PlayScreen implements Screen {
 //    }
 
     song = RhythmKnight.STAGE_ONE_MUSIC;
+
+    AssetsManager am = new AssetsManager();
 
     music = RhythmKnight.manager.get(song, Music.class);
     music.setVolume(0.7f);
@@ -206,7 +207,6 @@ public class PlayScreen implements Screen {
 
 
   public boolean gameOver() {
-    // TODO: Check if static is needed here
     if ((player.currentState == RKnight.State.DEAD && player.getStateTimer() > 3)) {
       // stop music when player dies
 //      beatDetector.player.pause();
@@ -240,31 +240,6 @@ public class PlayScreen implements Screen {
 
   }
 
-  // Handle any key inputs or events
-  public void handleInput(float deltaTime) {
-
-    // Old method for handling input for RK actions
-//    if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-//      player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
-//    }
-//    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && (player.b2body.getLinearVelocity().x <= 2)
-//            && player.canMove) {
-//      player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
-//    }
-//    if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && (player.b2body.getLinearVelocity().x >= -2)
-//            && player.canMove) {
-//      player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
-//    }
-
-    // new method using input processor
-    // pushes all new input events to inputController instance
-    // Events are dispatched right before the call to ApplicationListener.render()
-    // on the rendering thread
-    // Check if screen has been tapped
-//    inputController.tap(0, 0, 0, 0);
-
-  }
-
   public void update(float deltaTime) {
 
     // play cutscene at beginning of game
@@ -275,7 +250,6 @@ public class PlayScreen implements Screen {
     }
 
     // focus camera on player
-    // TODO: isStage_1, Improve logic
     if (cutSceneController.isCameraPositioned() && gameCam.zoom > 0.7 && isStage_1) {
       gameCam.zoom -= 0.003;
       gameCam.position.y -= 0.003;
@@ -305,8 +279,6 @@ public class PlayScreen implements Screen {
     lwbdBeatDetector();
 //    tarsosPitchDetector();
 
-    // handles any key inputs or events
-    handleInput(deltaTime);
 
     //  Tells the physics engine that 1/60th of a second has passed every time you call it.
     //  If your game loop is being called more than 60 times a second it will go fast; less than 60
@@ -315,12 +287,13 @@ public class PlayScreen implements Screen {
     // hardware, so this method will end up in different behavior on different devices.
     world.step(1 / 60f, 6, 2);
 
-    //update for sprites
+    //update for RKnight instance
     player.update(deltaTime);
 
     // update Hud
     hud.update(deltaTime);
 
+    // draw goblings to the screen
     for (Enemy enemy : creator.getGoblings()) {
       enemy.update(deltaTime);
     }
@@ -336,25 +309,10 @@ public class PlayScreen implements Screen {
   public void minimBeatDetector() {
     // beat detector logic
 //    minimBeatDetector.beat.detect(minimBeatDetector.player.mix);
-
-//    // beat detection test
-//    if(minimBeatDetector.beat.isHat()) {
-//      System.out.println("HAT");
-//    }
-//
-//    if(minimBeatDetector.beat.isSnare()) {
-//      System.out.println("SNARE");
-//    }
-//
-//    if (minimBeatDetector.beat.isKick()) {
-//      System.out.println("KICK");
-//    }
-//
 //    // MINIM BEAT DETECTION
 ////     spawn enemies if beat detected
 //    if (minimBeatDetector.beat.isSnare()) {
 //      Gdx.app.log("BEAT DETECT", "BEAT: " + (++beatCount));
-//      // TODO: Improve this
 //      if (map.getLayers().get(6).getObjects().iterator().hasNext() && cutSceneController.isCameraPositioned()
 //              && enemiesSpawned < enemiesToKill) {
 ////        Gdx.app.log("Gobling", "Spawned at time: " + gameTime);
@@ -366,13 +324,14 @@ public class PlayScreen implements Screen {
   }
 
   public void lwbdBeatDetector() {
-    // LWBD BEAT DETECTION
+    // remove enemy from list if beat is detected and camera is not positioned
+    // used to fix over spawning of enemies when the camera is finally positioned
     if (gameTime > lwbdBeatList.get(0) && !cutSceneController.isCameraPositioned()) {
-      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + lwbdBeatList.get(0));
       lwbdBeatList.remove(0);
-    } else if ((gameTime) > lwbdBeatList.get(0) && cutSceneController.isCameraPositioned() && enemiesSpawned < enemiesToKill) {
-      System.out.println("GAME TIME=" + gameTime + "\nBEAT TIME=" + lwbdBeatList.get(0));
-      System.out.println("SPAWN ENEMY");
+    }
+    // spawn enemy if game timer is greater than next beat time, and remove first element in list
+    else if ((gameTime) > lwbdBeatList.get(0) && cutSceneController.isCameraPositioned()
+            && enemiesSpawned < enemiesToKill) {
       creator.spawnGobling();
       enemiesSpawned += 1;
       lwbdBeatList.remove(0);
@@ -417,6 +376,7 @@ public class PlayScreen implements Screen {
     game.batch.begin();
     player.draw(game.batch);
 
+    // draw goblings to the screen
     for (Enemy enemy : creator.getGoblings()) {
       enemy.draw(game.batch);
     }
@@ -435,7 +395,7 @@ public class PlayScreen implements Screen {
       player.setReadyToBattle(false);
       Gobling.resetDeath();
       // pass in the final score (score - points lost from number of misses)
-      game.setScreen(new GameOver(game, (Hud.getScore() - ( player.getTotalNumberOfMisses() * 50) )));
+      game.setScreen(new GameOver(game, (Hud.getScore() - (player.getTotalNumberOfMisses() * 50))));
       dispose();
     }
 
@@ -504,7 +464,5 @@ public class PlayScreen implements Screen {
   public RKnight getPlayer() {
     return player;
   }
-
-
 
 }

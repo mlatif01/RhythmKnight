@@ -51,7 +51,6 @@ public class Hud implements Disposable {
     hud_stage = new Stage(viewport, sb);
 
 
-
     // In order to provide organisation, we create a table in our stage and then we can lay this out
     // to organise them in a certain position in the stage
     Table table = new Table();
@@ -71,7 +70,7 @@ public class Hud implements Disposable {
     stageLabel = new Label("STAGE", new Label.LabelStyle(new BitmapFont(),
             Color.WHITE));
     // Change level depending on which stage is selected (NEEDS TO BE ADDED)
-    levelLabel = new Label(world+"-"+stage, new Label.LabelStyle(new BitmapFont(),
+    levelLabel = new Label(world + "-" + stage, new Label.LabelStyle(new BitmapFont(),
             Color.WHITE));
 
     // add labels to the table
@@ -93,8 +92,6 @@ public class Hud implements Disposable {
 
   public void update(float deltaTime) {
     timer += deltaTime;
-    System.out.println(deltaTime);
-    // TODO
     // if rk alive then set hp to current hp value
     if (RKnight.getHp() > 0) {
       rhythmKnightHpLabel.setText((String.format("%02d", RKnight.getHp())));
@@ -104,7 +101,7 @@ public class Hud implements Disposable {
     else if (RKnight.getHp() <= 0) {
       rhythmKnightHpLabel.setText((String.format("%02d", 0)));
     }
-    if (timer > 0.5) {
+    if (timer > 0.001) {
       scoreLabel.setText(String.format("%06d", score));
       timer = 0;
     }

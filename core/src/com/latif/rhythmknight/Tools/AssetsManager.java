@@ -42,7 +42,6 @@ public class AssetsManager extends AssetManager {
     instance.load("audio/basicdrum.ogg", Music.class);
     instance.load("audio/song1.mp3", Music.class);
 
-
     // finish loading assets
     instance.finishLoading();
   }

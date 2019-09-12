@@ -1,9 +1,6 @@
 package com.latif.rhythmknight;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.latif.rhythmknight.Screens.TitleScreen;
 import com.latif.rhythmknight.Tools.AssetsManager;
@@ -63,9 +60,9 @@ public class RhythmKnight extends Game {
 
   }
 
-  // used to update and render the game elements called 60 times per second
   @Override
   public void render() {
+    // used to update and render the game elements called 60 times per second
     // delegates the render method to the active screen
     super.render();
   }
